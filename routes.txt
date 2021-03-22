@@ -1,0 +1,61 @@
+api/auth/sign 
+POST
+=>{ email:string,password:string }
+<={ message:string }
+Chiffre le mot de passede l'utilisateur, ajoutel'utilisateur à la base dedonnéesPOST/api/auth/login{ email:string,password:string }{ userId:string,token:string }Vérifie les informationsd'identification del'utilisateur, enrenvoyant l'identifiantuserID depuis la basede données et un jetonWeb JSON signé(contenant égalementl'identifiant userID)GET/api/sauces-Tableaudes saucesRenvoie le tableau detoutes les sauces dansla base de données
+
+api/auth/login 
+GET (mais modifie la base sur l'indicateur is_connected POST dans P6)
+=>{ email:string,password:string }
+<={ userId:string,token:string }
+Vérifie les informationsd'identification del'utilisateur, enrenvoyant l'identifiantuserID depuis la basede données et un jetonWeb JSON signé(contenant égalementl'identifiant userID)
+
+api/auth/forgottenPass [optionnel]
+=>{}
+<={}
+
+api/auth/disconnect ou api/users/:currentuser/disconnect ?
+=>{}
+<={}
+
+
+api/users/:user_id/changeProfil ou api/users/:currentuser/changeProfil [avatar optionnel]
+=>{}
+<={}
+
+api/messages
+GET
+=>{userId:string, title:string, last_action:date}
+<={message:string }
+Tableau de 10 messages parmis les dates de creation et de reponse les plus récentes pour affichage (titre, createur, date de dernieres réponse)
+
+api/messages/new 
+POST
+=>{userId:string, title:string, content:string}
+<={message:string }
+crée un nouveau message dans la table message
+
+api/messages/response
+POST
+=>{userId:string, content:string, parent_msg:number}
+<={message:string }
+poste la reponse dans la table message
+
+api/messages/modify ou api/messages/:id
+UPDATE (quand utiliser put? need cas concret)
+=>{userID:string, messageID:number, new_title:string, new_content:string}
+<={message:string}
+modifie un message ou une reponse dans la base selon droits
+
+api/messages/delete ou api/messges/:id?
+DELETE 
+=>{userID:string, messageID:number}
+<={message:string}
+supprimer un message ou une reponse dans la base selon droits / supprime le message ou la réponse ayant l'id fournie, selon les droits
+
+api/signal [optionnel]
+=>{messageID:number}
+<={message:string}
+envoie un signalement en cas de non respect d'un message aux regles de respect du réseau
+
+

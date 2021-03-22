@@ -1,0 +1,22 @@
+{
+  "name": "p7_charlot_romain",
+  "version": "1.0.0",
+  "description": "P7_charlot_romain Projet 7 formation développeur web openclassrooms  Réseau social d'entreprise Groupomania Compétences développées : SGBD SQL, framework Vue.JS",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keitaro51/RomainCharlot_7_05032021.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Keitaro51/RomainCharlot_7_05032021/issues"
+  },
+  "homepage": "https://github.com/Keitaro51/RomainCharlot_7_05032021#readme",
+  "devDependencies": {
+    "eslint": "^7.21.0"
+  }
+}
