@@ -18,5 +18,13 @@
   "homepage": "https://github.com/Keitaro51/RomainCharlot_7_05032021#readme",
   "devDependencies": {
     "eslint": "^7.21.0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "jsonwebtoken": "^8.5.1",
+    "sequelize": "^6.6.2"
   }
 }
