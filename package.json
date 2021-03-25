@@ -2,9 +2,9 @@
   "name": "p7_charlot_romain",
   "version": "1.0.0",
   "description": "P7_charlot_romain Projet 7 formation développeur web openclassrooms  Réseau social d'entreprise Groupomania Compétences développées : SGBD SQL, framework Vue.JS",
-  "main": "server.js",
+  "main": "./api/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "nodemon": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,9 @@
     "express": "^4.17.1",
     "helmet": "^4.4.1",
     "jsonwebtoken": "^8.5.1",
-    "sequelize": "^6.6.2"
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.2",
+    "sequelize-auto": "^0.8.1"
   }
 }

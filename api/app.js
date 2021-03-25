@@ -1,12 +1,26 @@
 const express = require('express');
 const app = express();
-
 const path = require('path');
 
+const { Sequelize } = require('sequelize');
+const mysql2 = require('mysql2');
+
 const helmet = require('helmet');
-require("dotenv").config();
+console.log(process.env.PORT)
 
 //connection to database
+const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`);
+console.log(sequelize.config)
+//pool?
+
+async function test() {
+    try {
+  await sequelize.authenticate();
+  console.log('Connection has been established successfully.');
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}}
+test();
 
 //secure app 
 app.use(helmet());
