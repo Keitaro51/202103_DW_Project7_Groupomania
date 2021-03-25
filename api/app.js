@@ -1,26 +1,26 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-
 const { Sequelize } = require('sequelize');
 const mysql2 = require('mysql2');
-
 const helmet = require('helmet');
-console.log(process.env.PORT)
+const messageRoutes = require('./routes/message');
+const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 
 //connection to database
 const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`);
-console.log(sequelize.config)
 //pool?
 
-async function test() {
+//connection test
+async function connection_test() {
     try {
   await sequelize.authenticate();
   console.log('Connection has been established successfully.');
 } catch (error) {
   console.error('Unable to connect to the database:', error);
 }}
-test();
+connection_test();
 
 //secure app 
 app.use(helmet());
@@ -37,6 +37,8 @@ app.use((req, res, next) => {
 app.use(express.json()); 
 
 //api routes
-
+app.use('/api/message', messageRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;
