@@ -1,5 +1,5 @@
 //@ts-nocheck
-const Sauce = require('../models/Sauce');
+const Message = require('../models/Message');
 const fs = require('fs');
 
 exports.lastsMessages = (req, res, next) => {};
