@@ -4,8 +4,8 @@ const path = require('path');
 const { Sequelize } = require('sequelize');
 const mysql2 = require('mysql2');
 const helmet = require('helmet');
-//const messageRoutes = require('./routes/message');
-//const userRoutes = require('./routes/user');
+const messageRoutes = require('./routes/message');
+const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 
 //connection to database
@@ -36,8 +36,8 @@ app.use((req, res, next) => {
 app.use(express.json()); 
 
 //api routes
-//app.use('/api/message', messageRoutes);
+app.use('/api/message', messageRoutes);
 app.use('/api/auth', authRoutes);
-//app.use('/api/user', userRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;

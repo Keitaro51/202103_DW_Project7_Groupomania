@@ -5,6 +5,7 @@ const Message = sequelize.define('Message', {
   id: {
     type: DataTypes.SMALLINT.UNSIGNED,
     allowNull: false,
+    autoIncrement:true,
     primaryKey: true
   },
   creator_id: {
