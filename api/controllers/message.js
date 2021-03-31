@@ -1,6 +1,7 @@
 //@ts-nocheck
 const Message = require('../models/Message');
 const User = require('../models/User');
+const { Op } = require("sequelize");
 const fs = require('fs');
 
 
@@ -10,14 +11,20 @@ exports.newMessage = (req, res, next) => {
         .catch(error => res.status(400).json({error, message:'Message non enregistré'}));  
 };
 
-//ajouter verif if  req.body.userId = creator_id
+//ajouter suppression des messages enfants (réponses)
 exports.deleteMessage = (req, res, next) => {
     //find rights of user who tried to delete msg
     User.findOne({attributes:['id', 'rights'], where:{id:req.body.userId}}) 
         .then(user=>{
             //check if user is the original creator of the message  or moderator or administrator
             if((req.body.userId == req.body.msgCreatorId) || (user.rights == 2) || (user.rights == 3)){
-                Message.destroy({where: {id:req.body.messageId}})
+                //delete message and all associated responses
+                //TODO ne fonctionne pas à cause d'un problème de clé étrangère
+                Message.destroy({
+                    where: {
+                        [Op.or]: [{ id:req.body.messageId }, { parent_msg_id:req.body.parentMsgId }]
+                    }
+                })
                     .then(()=>res.status(200).json({message:'Message supprimé'}))
                     .catch(error => res.status(400).json({error, message:'Message non supprimé'}));  
             }else{
@@ -43,5 +50,27 @@ exports.modifyMessage = (req, res, next) => {
         .catch(error => res.status(400).json({error}));
 };
 
-exports.lastsMessages = (req, res, next) => {};
-exports.viewMessage = (req, res, next) => {};
+exports.lastsMessages = (req, res, next) => {
+    //find 10 last messages (responses includes)
+    Message.findAll({
+        order:[['creation_date', 'DESC']],
+        limit: 10
+    })
+        .then(list=>res.status(200).json({list, message:'10 derniers messages'}))
+        .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));  
+        //TODO n'affichera pas le titre des reponses car NULL ni le titre de leurs éléments parents
+};
+exports.viewMessage = (req, res, next) => {
+    //find asked message
+    Message.findOne({
+        where: {
+            [Op.and]:[
+                {id:req.params.id},
+                {[Op.not]: null}
+            ]
+        }
+    })
+    //TODO récupèré aussi les msg null (si on pase une id qui n'existe pas) - op.not ne corrige pas
+        .then(msg=>res.status(200).json({msg, message:'Messages récupéré'}))
+        .catch(error => res.status(400).json({error, message:'Message non récupéré'}));  
+};
