@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 //const fs = require('fs');
 
 exports.disconnect = (req, res, next) => {
-
+//TODO à faire lorsque l'enregistrement front du token sera implémenté dans le local ou session storage
 };
 
 exports.viewProfil = (req, res, next) => {
@@ -13,32 +13,40 @@ exports.viewProfil = (req, res, next) => {
     attributes: [`email`, `firstname`, `lastname`, `department`, `creation_date`, `avatar`],
     where: { id: req.params.id }
   })
-    //TODO récupèré aussi les profil null (si on pase une id qui n'existe pas) - idem api/message/:id
-    .then(profil => res.status(201).json({ profil, message: 'Profil utilisateur trouvé' }))
-    .catch(error => res.status(400).json({ error, message: 'Profil utilisateur introuvable' }));
+    .then(profil =>{ 
+      if (profil === null) throw({status:404, message:"profil inexistant"});
+      res.status(201).json({ profil, message: 'Profil utilisateur trouvé' })
+    })
+      .catch(error => res.status(error.status |400).json({ error, message: error.message | 'Profil utilisateur introuvable' }));
 };
 
-exports.profilUpdate = (req, res, next) => {
+exports.profilUpdate = async (req, res, next) => {
   //TODO prise en charge des avatar
-  const emailCryptoJs = cryptojs(req.body.new_email, `${process.env.EMAIL_CRYPTOJS}`).toString();
-  User.update(
-    { email: emailCryptoJs, firstname: req.body.new_firstname, lastname: req.body.new_lastname, department: req.body.new_department, avatar: req.body.new_avatar },
-    { where: { id: req.params.id } }
-  )
-    .then(() => res.status(201).json({ message: 'Profil utilisateur modifié' }))
-    .catch(error => res.status(400).json({ error, message: 'Profil utilisateur non modifié' }));
+  const toUpdate = {};
+  try {
+    if (req.body.new_email) toUpdate.email = cryptojs(req.body.new_email, `${process.env.EMAIL_CRYPTOJS}`).toString();
+    if (req.body.new_password) toUpdate.password = await crypt(req.body.new_password);
+    if (req.body.new_firstname) toUpdate.firstname = req.body.new_firstname;
+    if (req.body.new_lastname) toUpdate.lastname = req.body.new_lastname;
+    if (req.body.new_department) toUpdate.department = req.body.new_department;
+    if (req.body.new_avatar) toUpdate.avatar = req.body.new_avatar;
 
-  //dissocier changement de mdp dans nouvelle route? 
-  if(req.body.new_password){
-    bcrypt.hash(req.body.new_password, 10)
-      .then(hash => {
-        User.update(
-          { password:hash },
-          { where: { id: req.params.id } }
-        )
-          .then(() => res.status(201).json({ message: 'Mot de passe modifié' }))
-          .catch(error => res.status(400).json({ error, message: 'Mot de passe non modifié' }));
-      })
-      .catch(error => res.status(500).json({error}));
+    await User.update(
+      toUpdate,
+      { where: { id: req.params.id } }
+    );
+    res.status(201).json({ message: 'Profil utilisateur modifié' });
+  }
+  catch(error){
+    res.status(eroor.status | 400).json({ error, message: error.message | 'Profil utilisateur non modifié' });
   }
 };
+
+async function crypt(pass){
+  try {
+    return await bcrypt.hash(pass, 10)
+  }
+  catch (err){
+    throw({status:500, message:"crypt failed"});
+  }
+}

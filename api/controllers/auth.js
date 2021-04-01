@@ -10,7 +10,6 @@ exports.sign = (req, res, next) => {
   const emailCryptoJs = cryptojs(req.body.email, `${process.env.EMAIL_CRYPTOJS}`).toString();
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
-      //date() deprecated?
       User.create({ email: emailCryptoJs, firstname: req.body.firstname, lastname: req.body.lastname, department: req.body.department, password: hash, creation_date: Date(), is_connected: Date() })
         .then(user => res.status(201).json({ user, message: 'Utilisateur créé' }))
         .catch(() => res.status(400).json({ error: 'Utilisateur non créé' }));
@@ -78,7 +77,6 @@ exports.forgot = (req, res, next) => {
                 to: `${req.body.email}`,
                 subject: `Réinitialisation email`,
                 text: `Veuillez trouver ci après votre nouveau mot de passe. Vous pouvez le modifier dans votre espace personnel. Mot de passe=> ${new_pass}`
-                //comment formater le text?
               };
 
               transporter.sendMail(mailOptions, function (error, info) {

@@ -19,10 +19,11 @@ exports.deleteMessage = (req, res, next) => {
             //check if user is the original creator of the message  or moderator or administrator
             if((req.body.userId == req.body.msgCreatorId) || (user.rights == 2) || (user.rights == 3)){
                 //delete message and all associated responses
-                //TODO ne fonctionne pas à cause d'un problème de clé étrangère
+                //TODO sqlMessage": "Cannot delete or update a parent row: a foreign key constraint fails (`groupomania_test`.`messages`, CONSTRAINT `fk_parent_msg_id` FOREIGN KEY (`parent_msg_id`) REFERENCES `messages` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT)",
+                //"sql": "DELETE FROM `messages` WHERE (`id` = 37 OR `parent_msg_id` = 37)"
                 Message.destroy({
                     where: {
-                        [Op.or]: [{ id:req.body.messageId }, { parent_msg_id:req.body.parentMsgId }]
+                        [Op.or]: [{ id:req.body.messageId }, { parent_msg_id:req.body.messageId }]
                     }
                 })
                     .then(()=>res.status(200).json({message:'Message supprimé'}))
@@ -63,14 +64,11 @@ exports.lastsMessages = (req, res, next) => {
 exports.viewMessage = (req, res, next) => {
     //find asked message
     Message.findOne({
-        where: {
-            [Op.and]:[
-                {id:req.params.id},
-                {[Op.not]: null}
-            ]
-        }
+        where: {id:req.params.id}
     })
-    //TODO récupèré aussi les msg null (si on pase une id qui n'existe pas) - op.not ne corrige pas
-        .then(msg=>res.status(200).json({msg, message:'Messages récupéré'}))
-        .catch(error => res.status(400).json({error, message:'Message non récupéré'}));  
+        .then(msg=>{
+            if (msg === null) throw({status:404, message:"message inexistant"});
+            res.status(200).json({msg, message:'Messages récupéré'})
+        })
+        .catch(error => res.status(error.status | 400).json({error, message:error.message | 'Message non récupéré'}));  
 };
