@@ -1,34 +1,33 @@
 <template>
-  <nav>
-    <img src="../assets/icon.png" alt="Logo de groupomania">
-    <h1>Groupomania</h1>
-    <ul>
-      <li>Lien1</li>
-      <li>Lien2</li>
-    </ul>    
-  </nav>
+    <nav>
+      <img src="../assets/icon-left-font-monochrome-white.svg" alt="Logo de groupomania">
+      <h1>Connecting People</h1>
+    </nav>
 </template>
 
 <script>
 export default {
-  name: 'Navbar',
+  name: 'Navbar'
 }
 </script>
 
 <style lang="scss">
+
   nav{
-    display:flex;
-    margin-bottom:40px;
+    padding:30px 0 20px 0;
+    background-image: linear-gradient(
+        rgba(16, 34, 65, 0.7), 
+        rgba(16, 34, 65, 0.7)
+      ) , url('../assets/background.png');
+     background-size: cover;
+     background-position: center;
     img{
-      max-height:50px;
+      max-width:300px;
+      object-fit: cover;
     }
-    ul{
-      list-style:none;
-      display:flex;
-      justify-content:space-between;
-      li{
-        margin-right:10px
-      }
+    h1{
+      color: white;
+      font-size: 20px;
     }
   }
 </style>

@@ -1,13 +1,10 @@
 <template>
-  <footer>{{ msg }}</footer>
+  <footer>Contact</footer>
 </template>
 
 <script>
 export default {
-  name: 'Footer',
-  props: {
-    msg: String
-  }
+  name: 'Footer'
 }
 </script>
 
@@ -16,8 +13,9 @@ footer{
   position: absolute;
   bottom:0;
   width: 100%;
-  background-color:red;
+  background-color:rgba(16, 34, 65, 0.7);
   padding:30px 0 30px 0;
+  color:white;
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
   <h2>CONNEXION</h2>
-  <form method="action">
+  <form method="post">
     <div class="connect">
       <label for="email">Email</label>
       <input
@@ -9,6 +9,7 @@
         id="email"
         autofocus
         required
+        placeholder="my awesome email here"
         v-model.lazy="email"
       />
       <label for="password">Mot de passe</label>
@@ -17,22 +18,26 @@
         name="password"
         id="password"
         required
+        placeholder="my super password here"
         v-model.lazy="password"
       />
-      <Button msg="Connexion" />
+      <router-link to="/home/list"><Btn msg="Connexion" /></router-link>
+      <router-link to="/reinit">Mot de passe oublié</router-link>
+      <hr>
+      <p>Pas encore de compte?</p>
+      <router-link to="/signup"><Btn msg="Créer un compte" /></router-link>
     </div>
-    <a href="index.html">Mot de passe oublié</a>
   </form>
 </template>
 
 <script>
-import Button from "./Button.vue";
+import Btn from "../components/Button.vue";
 
 export default {
   name: "Connect",
   components: {
-    Button,
-  },
+    Btn
+  }
 };
 </script>
 
@@ -47,7 +52,7 @@ form {
   display: flex;
   flex-direction: column;
   :nth-child(odd){
-    margin: 15px;
+    margin: 10px;
   }
 }
 </style>
