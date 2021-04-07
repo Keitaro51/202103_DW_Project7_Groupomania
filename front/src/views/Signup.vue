@@ -38,6 +38,7 @@
       </select>
     </form>
     <router-link to="/home/list"><Btn msg="S'inscrire" /></router-link>
+    <!--TODO routeur link crée un <a> beaucoup trop large - ex:signup page desktop, zone cliquable enorme-->
 </template>
 
 <script>

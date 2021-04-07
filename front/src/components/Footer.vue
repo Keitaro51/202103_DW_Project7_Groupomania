@@ -17,5 +17,6 @@ footer{
   padding:30px 0 30px 0;
   color:white;
 }
+//TODO footer pas toujours bottom - ex : new message en desktop view
 
 </style>

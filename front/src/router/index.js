@@ -5,6 +5,8 @@ import Reinit from '../views/Reinit.vue'
 import Welcome from '../views/Welcome.vue'
 import Profil from '../views/Profil.vue'
 import List from '../views/List.vue'
+import Message from '../views/Message.vue'
+import NewMessage from '../views/NewMessage.vue'
 
 const routes = [
   {
@@ -14,11 +16,11 @@ const routes = [
   },
   {
     path: '/signup',
-    name: 'Inscription',
+    name: 'Signup',
     component: Signup
   }, {
     path: '/reinit',
-    name: 'Reinitialisation',
+    name: 'Reinit',
     component: Reinit
   }, {
     path: '/home',
@@ -26,15 +28,25 @@ const routes = [
     component: Welcome,
     children: [{
       path: 'list',
+      name:"List",
       component: List
     },{
       path: 'profil',
+      name:"Profil",
       component: Profil
+    },{
+      path: 'message/:msgId',
+      name: "Message",
+      component: Message      
+    },{
+      path: 'message/new', //TODO utiliser children ou autre technique pour message/childrens
+      name: "NewMessage",
+      component: NewMessage      
     }]
   }
-  // ,{
+  //TODO,{
   //   path: '*',
-  //   redirect: '/'
+  //   redirect: '/' ou créer view error 404
   // }
 ]
 
