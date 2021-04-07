@@ -2,3 +2,4 @@ node_modules
 .eslintrc.json
 jsconfig.json
 .gdoc
+.env
