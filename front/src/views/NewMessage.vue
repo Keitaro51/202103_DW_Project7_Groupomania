@@ -10,7 +10,7 @@
       required
       maxlength="250"
     />
-    <editor
+    <Editor
       class="TinyMCE"
       initialValue="<p>Initial editor content</p>"
       :init="{
@@ -28,17 +28,20 @@
             bullist numlist outdent indent | help',
       }"
     >
-    </editor>
+    </Editor>
+    <router-link to="/home/message/:msg"><Btn msg="Enregistrer"/></router-link>
   </form>
 </template>
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
+import Btn from "../components/Button.vue";
 
 export default {
   name: "NewMessage",
   components: {
-    editor: Editor,
+    Editor,
+    Btn
   },
   props: {
     msg: String,
@@ -46,12 +49,8 @@ export default {
 };
 </script>
 <style lang="scss">
-.newtitle {
-  width: 75%;
+.newtitle, .TinyMCE, .newtitle {
+  width: calc(100% - 10px);
   margin: 10px auto 10px auto;
-}
-.TinyMCE + * {
-  width: 75%;
-  margin: auto;
 }
 </style>

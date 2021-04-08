@@ -22,8 +22,8 @@ import Btn from "../components/Button.vue";
 export default {
   name: "Welcome",
   components: {
-    Btn,
-  },
+    Btn
+  }
 };
 </script>
 
