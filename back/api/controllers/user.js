@@ -1,5 +1,6 @@
 //@ts-nocheck
 const User = require('../models/User');
+const Department = require('../models/Department');
 const cryptojs = require('crypto-js/hmac-sha512');
 const bcrypt = require('bcrypt');
 //const fs = require('fs');
@@ -49,4 +50,10 @@ async function crypt(pass){
   catch (err){
     throw({status:500, message:"crypt failed"});
   }
+}
+
+exports.departmentList = async (req, res, next) =>{
+  Department.findAll()
+  .then(departments=>res.status(200).json({departments, message:'Liste des différents départements trouvée'}))
+  .catch(error=> res.status(400).json({error, message:'Liste des départements non trouvée'}));
 }

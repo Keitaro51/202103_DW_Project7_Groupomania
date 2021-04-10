@@ -5,5 +5,6 @@ const auth = require('../middleware/auth');
 router.post('/disconnect', auth, userCtrl.disconnect);
 router.post('/:id', auth, userCtrl.viewProfil);
 router.patch('/:id', auth, userCtrl.profilUpdate);
+router.get('/departmentList', userCtrl.departmentList)
 
 module.exports = router;

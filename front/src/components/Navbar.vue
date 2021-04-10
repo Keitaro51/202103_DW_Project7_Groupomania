@@ -14,6 +14,7 @@ export default {
 <style lang="scss">
 
   nav{
+    height:110px;
     padding:30px 0 20px 0;
     background-image: linear-gradient(
         rgba(16, 34, 65, 0.7), 

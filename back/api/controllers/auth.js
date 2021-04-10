@@ -20,7 +20,7 @@ exports.sign = (req, res, next) => {
 exports.login = (req, res, next) => {
   const emailCryptoJs = cryptojs(req.body.email, `${process.env.EMAIL_CRYPTOJS}`).toString();
   //search in database if user exist
-  User.findOne({ attributes: ['id', 'email', 'password'], where: { email: emailCryptoJs } })
+  User.findOne({ attributes: ['id', 'email', 'password', 'rights'], where: { email: emailCryptoJs } })
     .then(user => {
       if (!user) {
         return res.status(400).json({ error: 'Utilisateur non trouvé!' })
@@ -32,6 +32,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: user.id,
+            userRights:user.rights,
             token: jwt.sign(
               { userId: user.id },
               process.env.APP_SECRET,

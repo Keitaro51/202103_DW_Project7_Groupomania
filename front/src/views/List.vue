@@ -51,7 +51,7 @@ export default {
 <style lang="scss">
 table{
   border-collapse : collapse;
-  tr :not(a){ //après mount, <router-link> devient <a>
+  tr :not(a){
     border:solid 1px black;
     padding:5px;
   }

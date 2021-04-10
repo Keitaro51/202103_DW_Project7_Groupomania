@@ -9,7 +9,7 @@ const User = sequelize.define('User', {
     primaryKey: true
   },
   email: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING(200),//TODO varchar augmenté car hash trop long. Compromis?
     allowNull: false,
     unique: true
   },
@@ -26,7 +26,7 @@ const User = sequelize.define('User', {
     allowNull: false
   },
   password: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(200),//TODO varchar augmenté car hash trop long. Compromis?
     allowNull: false
   },
   creation_date: {

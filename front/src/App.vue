@@ -1,6 +1,8 @@
 <template>
   <Navbar/>
-  <router-view/> 
+  <main>
+    <router-view/> 
+  </main>
   <Footer/>
 </template>
 
@@ -26,6 +28,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   box-sizing: border-box;
+}
+main{
+  min-height: calc(100vh - 160px - 78px);
 }
 body{
   margin:0;
