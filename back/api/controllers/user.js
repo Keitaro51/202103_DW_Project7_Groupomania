@@ -6,7 +6,11 @@ const bcrypt = require('bcrypt');
 //const fs = require('fs');
 
 exports.disconnect = (req, res, next) => {
-//TODO à faire lorsque l'enregistrement front du token sera implémenté dans le local ou session storage
+  User.update(
+    {is_connected:Date()},
+    {where: {id: req.body.userId }}
+    )
+    .then(()=>res.status(200).json({message: 'Déconnecté'}))
 };
 
 exports.viewProfil = (req, res, next) => {
@@ -18,7 +22,7 @@ exports.viewProfil = (req, res, next) => {
       if (profil === null) throw({status:404, message:"profil inexistant"});
       res.status(201).json({ profil, message: 'Profil utilisateur trouvé' })
     })
-      .catch(error => res.status(error.status |400).json({ error, message: error.message | 'Profil utilisateur introuvable' }));
+    .catch(error => res.status(error.status |400).json({ error, message: error.message | 'Profil utilisateur introuvable' }));
 };
 
 exports.profilUpdate = async (req, res, next) => {

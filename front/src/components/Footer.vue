@@ -13,6 +13,6 @@ footer{
   width: 100%;
   background-color:rgba(16, 34, 65, 0.7);
   padding:30px 0 30px 0;
-  color:white;
+  color:white; /*TODO améliorer le footer*/
 }
 </style>

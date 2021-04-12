@@ -8,7 +8,7 @@
       <Btn class="Btn" msg="Créer un nouveau message"/>
     </router-link>
     <router-link to="/">
-      <Btn class="button" msg="Deconnexion" />
+      <Btn class="button" msg="Deconnexion" @click="disconnect"/>
     </router-link>
   </header>
   <router-view/>
@@ -23,6 +23,21 @@ export default {
   name: "Welcome",
   components: {
     Btn
+  },
+  methods:{
+    async disconnect(){
+      await fetch(this.$store.state.src + 'user/disconnect',{
+        method: "POST",
+        headers: {
+          'authorization': 'bearer ' + localStorage.getItem('token'),
+          'content-type': 'application/json'          
+        },
+        body: JSON.stringify({userId:parseInt(localStorage.getItem('userId'))})
+      });
+    
+      console.log('front ok')
+      localStorage.clear('userId','token','userRights')
+    }
   }
 };
 </script>

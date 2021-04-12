@@ -16,23 +16,24 @@
         Dernière modification
       </th>
     </tr>
-    <tr class="msg1">
-      <td class="new">
-        New
+    <tr v-for="msg of msgList" :key="msg.id" :class="`${msg.id}`">
+      <td>
+        {{ msg.id }}<!--TODO gestion de la pastille new v-if? si date dernière modif < last connected date-->
       </td>
       <td class="title">
-        Msg 1 title
+        {{ msg.title }}<!--TODO recupérer titre du parent quand pas de titre (reponse)-->
       </td>
       <td class="content">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, praesentium? Quidem sunt iure, eligendi cumque excepturi est dolorem dolore architecto dolores possimus aspernatur nulla rem alias fugiat, optio odio amet!
+        {{ msg.content }}
       </td>
       <td class="creator">
-        Creator
+        {{ msg.creator_id }}<!--TODO recupérer nom plutot que l'id-->
       </td>
       <td class="lastdate">
-        Date last change
+        {{ msg.creation_date }}<!--TODO formater date-->
       </td>
-      <router-link to="/home/message/:msgId"><Btn class="Btn" msg="Voir"/></router-link>
+      
+      <router-link :to="{ name: 'Message', params: { msgId : msg.id }} "><Btn class="Btn" msg="Voir"/></router-link>
     </tr>
   </table>
 </template>
@@ -44,6 +45,24 @@ export default {
   name: "List",
   components:{
     Btn
+  },
+  data(){
+    return{
+      new:true,
+      msgList:[]
+    }
+  },
+  async beforeCreate(){
+      let lasts = await fetch(this.$store.state.src + 'message/lasts',{
+        method: "POST",
+        headers: {
+          'authorization': 'bearer ' + localStorage.getItem('token'),
+          'content-type': 'application/json'          
+        },
+        body: JSON.stringify({userId:parseInt(localStorage.getItem('userId'))})
+      });
+      this.msgList = await lasts.json();
+      this.msgList = this.msgList.list;
   }
 };
 </script>
