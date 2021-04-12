@@ -19,6 +19,7 @@ exports.viewProfil = (req, res, next) => {
     where: { id: req.params.id }
   })
     .then(profil =>{ 
+      //TODO décrypter l'email avant l'envoi?
       if (profil === null) throw({status:404, message:"profil inexistant"});
       res.status(201).json({ profil, message: 'Profil utilisateur trouvé' })
     })

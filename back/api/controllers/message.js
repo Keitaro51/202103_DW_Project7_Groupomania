@@ -1,9 +1,8 @@
 //@ts-nocheck
 const Message = require('../models/Message');
 const User = require('../models/User');
-const { Op } = require("sequelize");
-const fs = require('fs');
-
+const { Op, ForeignKeyConstraintError } = require("sequelize");
+//const fs = require('fs');
 
 exports.newMessage = (req, res, next) => {
     Message.create({creator_id: req.body.userId, creation_date: Date(), title: req.body.title, content:req.body.content, parent_msg_id: req.body.parent_msg})
@@ -57,7 +56,16 @@ exports.lastsMessages = (req, res, next) => {
         order:[['creation_date', 'DESC']],
         limit: 10
     })
-        .then(list=>res.status(200).json({list, message:'10 derniers messages'}))
+        .then(list=>{
+            //TODO quand title == null, afficher title du parent_msg_id 
+            //impossible avant le res car le format de list est trop exotique
+            // for(let i = list.length;i>0;i--){
+                // if(list[i].title === null){
+                    //list[i].title = "test"
+                //}
+            // };
+            res.status(200).json({list, message:'10 derniers messages'})
+        })
         .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));  
         //TODO n'affichera pas le titre des reponses car NULL ni le titre de leurs éléments parents
 };

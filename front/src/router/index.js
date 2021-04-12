@@ -31,7 +31,7 @@ const routes = [
       name:"List",
       component: List
     },{
-      path: 'profil',
+      path: 'profil/:userId',
       name:"Profil",
       component: Profil
     },{

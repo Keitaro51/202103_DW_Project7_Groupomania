@@ -18,7 +18,7 @@
     </tr>
     <tr v-for="msg of msgList" :key="msg.id" :class="`${msg.id}`">
       <td>
-        {{ msg.id }}<!--TODO gestion de la pastille new v-if? si date dernière modif < last connected date-->
+        {{ msg.id }}<!--TODO gestion de la pastille new v-if? si date dernière modif < last connected date (récupérer is_connected depuis l'api?-->
       </td>
       <td class="title">
         {{ msg.title }}<!--TODO recupérer titre du parent quand pas de titre (reponse)-->
@@ -30,7 +30,7 @@
         {{ msg.creator_id }}<!--TODO recupérer nom plutot que l'id-->
       </td>
       <td class="lastdate">
-        {{ msg.creation_date }}<!--TODO formater date-->
+        {{ formatedDate(msg.creation_date) }}
       </td>
       
       <router-link :to="{ name: 'Message', params: { msgId : msg.id }} "><Btn class="Btn" msg="Voir"/></router-link>
@@ -63,6 +63,13 @@ export default {
       });
       this.msgList = await lasts.json();
       this.msgList = this.msgList.list;
+  },
+  methods:{
+    formatedDate(formated_date){
+      formated_date = new Date(formated_date)
+      return formated_date.toString() 
+      //TODO quel est meilleur format pour tenir compte des décalages régionnaux/heures d'hiver et d'été...?
+    }
   }
 };
 </script>

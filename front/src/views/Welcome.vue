@@ -1,7 +1,8 @@
 <template>
   <header>
     <h2>Bienvenue Jean Eude</h2>
-    <router-link to="/home/profil"> <!--TODO retirer quand view profil active-->
+    <router-link to="/home/profil/93" v-show="!this.$store.state.is_profil_page">
+      <!-- :to="{ name: 'Profil', params: { userId: parseInt(localStorage.getItem('userId')) }}" -->
       <Btn class="button" msg="Voir/modifier le profil" />
     </router-link>
      <router-link to="/home/message/new"> <!--TODO retirer quand view new message active-->
@@ -34,9 +35,9 @@ export default {
         },
         body: JSON.stringify({userId:parseInt(localStorage.getItem('userId'))})
       });
-    
-      console.log('front ok')
-      localStorage.clear('userId','token','userRights')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('token')
+      localStorage.removeItem('userRights')
     }
   }
 };

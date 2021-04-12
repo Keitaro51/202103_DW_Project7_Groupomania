@@ -5,6 +5,7 @@ const Right = sequelize.define('Right', {
   id: {
     type: DataTypes.TINYINT.UNSIGNED,
     allowNull: false,
+    autoIncrement: true,
     primaryKey: true
   },
   role: {
