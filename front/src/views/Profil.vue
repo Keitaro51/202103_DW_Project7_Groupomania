@@ -33,12 +33,14 @@
       />
       <label for="department">Département</label>
       <select name="department">
-         <option value="">Choisissez votre service</option> 
+        <option value="">Choisissez votre service</option> 
         <option value="Choix1">Choix1</option>
       </select>
       <!-- TODO préremplir avec le département actuel et rappeler/généraliser la fonction de création de liste dprt-->
     </form>
-    <router-link to="/home/list"><Btn msg="Enregistrer" /></router-link>
+    <router-link to="/home/list"><Btn msg="Annuler" /></router-link>
+    <Btn msg="Enregistrer" @click="save"/>
+    <Btn msg="Supprimer le profil" @click="deleteProfil"/>
 </template>
 
 <script>
@@ -68,6 +70,27 @@ export default {
   },
   unmounted(){
       this.$store.dispatch('isprofilpage')
+  },
+  methods:{
+    async deleteProfil(){
+      await fetch(this.$store.state.src + 'user/delete/' + this.$route.params.userId,{
+        method:"DELETE",
+        headers:{
+          'authorization': 'bearer ' + localStorage.getItem('token'),
+          'content-type': 'application/json'          
+      },
+      body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), userRights:parseInt(localStorage.getItem('userRights'))})
+    });
+      localStorage.removeItem('userId');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRights');
+      this.$router.push({ name: "Login" });
+    },
+
+    async save(){
+
+    }
+
   }
 };
 </script>

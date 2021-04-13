@@ -62,3 +62,14 @@ exports.departmentList = async (req, res, next) =>{
   .then(departments=>res.status(200).json({departments, message:'Liste des différents départements trouvée'}))
   .catch(error=> res.status(400).json({error, message:'Liste des départements non trouvée'}));
 }
+
+exports.deleteProfil = async (req, res, next) =>{
+  //empeche un autre utilisateur de supprimer un profil, sauf admin
+  if((req.body.userId == req.params.id) || (req.body.userRights == 3)){
+    await User.destroy({ where: { id: req.params.id } })
+      .then(()=>res.status(200).json({message:'Profil supprimé'}))
+      .catch(error => res.status(400).json({error, message:'Profil non supprimé'}));
+  }else{
+    res.status(401).json({message:'Vous n\'avez pas les droits requis'})
+  }
+}

@@ -75,7 +75,7 @@ export default {
         }),
       });
       if (login.ok == true) {
-        login = await login.json();
+        login = await login.json();//TODO parsint à l'enregistrement plutot qu'au getitem
         localStorage.setItem("userId", login.userId); //TODO localStorage ou $store.state?
         localStorage.setItem("userRights", login.userRights); //TODO regrouper les setItem en une commande?
         localStorage.setItem("token", login.token);
