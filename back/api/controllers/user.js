@@ -1,7 +1,6 @@
 //@ts-nocheck
 const User = require('../models/User');
 const Department = require('../models/Department');
-const cryptojs = require('crypto-js/hmac-sha512');
 const bcrypt = require('bcrypt');
 //const fs = require('fs');
 
@@ -19,7 +18,6 @@ exports.viewProfil = (req, res, next) => {
     where: { id: req.params.id }
   })
     .then(profil =>{ 
-      //TODO décrypter l'email avant l'envoi?
       if (profil === null) throw({status:404, message:"profil inexistant"});
       res.status(201).json({ profil, message: 'Profil utilisateur trouvé' })
     })
@@ -30,7 +28,7 @@ exports.profilUpdate = async (req, res, next) => {
   //TODO prise en charge des avatar
   const toUpdate = {};
   try {
-    if (req.body.new_email) toUpdate.email = cryptojs(req.body.new_email, `${process.env.EMAIL_CRYPTOJS}`).toString();
+    if (req.body.new_email) toUpdate.email = req.body.new_email;
     if (req.body.new_password) toUpdate.password = await crypt(req.body.new_password);
     if (req.body.new_firstname) toUpdate.firstname = req.body.new_firstname;
     if (req.body.new_lastname) toUpdate.lastname = req.body.new_lastname;

@@ -9,7 +9,7 @@ const User = sequelize.define('User', {
     primaryKey: true
   },
   email: {
-    type: DataTypes.STRING(200),//TODO varchar augmenté car hash trop long. Compromis?
+    type: DataTypes.STRING(50),
     allowNull: false,
     unique: true
   },

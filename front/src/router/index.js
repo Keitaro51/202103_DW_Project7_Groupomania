@@ -7,6 +7,7 @@ import Profil from '../views/Profil.vue'
 import List from '../views/List.vue'
 import Message from '../views/Message.vue'
 import NewMessage from '../views/NewMessage.vue'
+import NotFound from '../views/NotFound.vue'
 
 const routes = [
   {
@@ -27,7 +28,7 @@ const routes = [
     name: 'Welcome',
     component: Welcome,
     children: [{
-      path: 'list',
+      path: 'list/:pageId',
       name:"List",
       component: List
     },{
@@ -39,15 +40,11 @@ const routes = [
       name: "Message",
       component: Message      
     },{
-      path: 'message/new', //TODO utiliser children ou autre technique pour message/childrens
+      path: 'message/new',
       name: "NewMessage",
       component: NewMessage      
     }]
-  }
-  //TODO,{
-  //   path: '*',
-  //   redirect: '/' ou créer view error 404
-  // }
+  },{ path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }, 
 ]
 
 const router = createRouter({

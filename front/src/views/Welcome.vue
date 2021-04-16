@@ -1,20 +1,17 @@
 <template>
   <header>
-    <h2>Bienvenue Jean Eude</h2>
-    <router-link to="/home/profil/93" v-show="!this.$store.state.is_profil_page">
-      <!-- :to="{ name: 'Profil', params: { userId: parseInt(localStorage.getItem('userId')) }}" -->
+    <h2>Bienvenue</h2>
+    <router-link :to="{ name: 'Profil', params:{userId : currentUser}}" v-show="!this.$store.state.is_profil_page">
       <Btn class="button" msg="Voir/modifier le profil" />
     </router-link>
-     <router-link to="/home/message/new"> <!--TODO retirer quand view new message active-->
-      <Btn class="Btn" msg="Créer un nouveau message"/>
+     <router-link :to="{ name: 'NewMessage'}" v-show="!this.$store.state.is_newmsg_page"> 
+      <Btn class="button" msg="Créer un nouveau message"/>
     </router-link>
     <router-link to="/">
       <Btn class="button" msg="Deconnexion" @click="disconnect"/>
     </router-link>
   </header>
   <router-view/>
-  <router-view name="Profil" />
-  <router-view name="List" /> <!-- TODO à quoi servent ces router view? newmessage marche même sans-->
 </template>
 
 <script>
@@ -24,6 +21,11 @@ export default {
   name: "Welcome",
   components: {
     Btn
+  },
+  data(){
+    return{
+      currentUser:parseInt(localStorage.getItem('userId'))
+    }
   },
   methods:{
     async disconnect(){

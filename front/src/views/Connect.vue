@@ -1,9 +1,8 @@
 <template>
   <h2>CONNEXION</h2>
-  <form method="post">
+  <form method="post" @submit="login">
     <div class="connect">
       <label for="email">Email</label>
-      <!-- TODO required marchent pas -->
       <input
         type="email"
         name="email"
@@ -22,12 +21,12 @@
         placeholder="my super password here"
         v-model.lazy="password"
       />
-      <Btn msg="Connexion" @click="login" />
+      <Btn msg="Connexion" />
       <a href="#" @click="forgot">Mot de passe oublié</a>
       <hr />
       <p>Pas encore de compte?</p>
-      <router-link to="/signup"><Btn msg="Créer un compte" /></router-link>
-      <!-- TODO reouter link devient btn dans a et pas a dans btn. CSS, cibler router_link ou a virtuel?-->
+      <router-link :to="{ name: 'Signup'}"><Btn msg="Créer un compte" /></router-link>
+      <!-- TODO router link devient btn dans a et pas a dans btn. CSS, cibler router_link ou a virtuel?-->
     </div>
   </form>
 </template>
@@ -63,7 +62,9 @@ export default {
       }
     },
 
-    async login() {
+    async login(e) {
+      e.stopPropagation();
+      e.preventDefault();
       let login = await fetch(this.$store.state.src + "auth/login", {
         method: "POST",
         headers: {
@@ -74,12 +75,14 @@ export default {
           password: this.$data.password,
         }),
       });
+      
       if (login.ok == true) {
         login = await login.json();//TODO parsint à l'enregistrement plutot qu'au getitem
+        console.log(login)
         localStorage.setItem("userId", login.userId); //TODO localStorage ou $store.state?
         localStorage.setItem("userRights", login.userRights); //TODO regrouper les setItem en une commande?
         localStorage.setItem("token", login.token);
-        this.$router.push({ name: "List" });//TODO fonctionne si email est n'a pas un format email (test OK / test@test.fr NOK (mais api fait le taf))
+        this.$router.push({ name: 'List', params : {pageId : 1 }});
       } else {
         alert("Email / mot de passe érroné ou manquant !");
       }

@@ -1,7 +1,8 @@
 <template>
     <h3>Profil</h3>
     <p>Membre depuis le : {{ profil.creation_date }}</p>
-    <form method="post">
+    <p class="updatedProfil" v-if="updated">Profil enregistré</p>
+    <form method="post" @submit="saveProfil">
       <label for="email">Email</label>
       <input
         type="email"
@@ -10,8 +11,8 @@
         autofocus 
         required
         placeholder="email@groupomania.com"
-        v-model.lazy="profil.email"
-      />
+        v-model.lazy="profil.email" 
+      /><!--TODO changement instant malgré lazy-->
       <!--TODO autofocus marche pas Autofocus processing was blocked because a document's URL has a fragment '#/home/profil'.-->
       <label for="firstname">Prénom</label>
       <input
@@ -19,7 +20,7 @@
         name="firstname"
         id="firstname"
         required
-        placeholder="Jean Eude"
+        placeholder="profil.firstname"
         v-model.lazy="profil.firstname"
       />
       <label for="lastname">Nom</label>
@@ -32,14 +33,14 @@
         v-model.lazy="profil.lastname"
       />
       <label for="department">Département</label>
-      <select name="department">
+      <select name="department" v-model.lazy="profil.department">
         <option value="">Choisissez votre service</option> 
-        <option value="Choix1">Choix1</option>
+        <option v-for="department of departments" :key="department.id" :value="department.id">{{ department.name }}</option> 
       </select>
-      <!-- TODO préremplir avec le département actuel et rappeler/généraliser la fonction de création de liste dprt-->
+      <!-- TODO rappeler/généraliser la fonction de création de liste dprt-->
+      <router-link :to="{ name: 'List', params: {pageId : 1}}"><Btn msg="Annuler" /></router-link>
+      <Btn msg="Enregistrer" />
     </form>
-    <router-link to="/home/list"><Btn msg="Annuler" /></router-link>
-    <Btn msg="Enregistrer" @click="save"/>
     <Btn msg="Supprimer le profil" @click="deleteProfil"/>
 </template>
 
@@ -52,12 +53,22 @@ export default {
   },
   data(){
     return{
-      profil:{}
+      profil:{},
+      departments:[],
+      updated:false
     }
   },
   async beforeCreate(){
-      this.$store.dispatch('isprofilpage') 
-      let response = await fetch(this.$store.state.src + 'user/' + this.$route.params.userId,{
+    //cache le bouton profil
+    this.$store.dispatch('isprofilpage') 
+    
+    //importe la liste de départements pour le select
+    let list = await fetch(this.$store.state.src + "user/departmentList")
+      this.departments = await list.json();
+      this.departments = this.departments.departments;
+
+    //récupère les info de profil avant création de la page
+    let response = await fetch(this.$store.state.src + 'user/' + parseInt(localStorage.getItem('userId')),{
       method: "POST",
       headers: {
         'authorization': 'bearer ' + localStorage.getItem('token'),
@@ -73,22 +84,40 @@ export default {
   },
   methods:{
     async deleteProfil(){
-      await fetch(this.$store.state.src + 'user/delete/' + this.$route.params.userId,{
-        method:"DELETE",
+      if(confirm('Cette action est irréverssible. Voulez vous vraiment supprimer votre profil?')){
+        await fetch(this.$store.state.src + 'user/delete/' + this.$route.params.userId,{
+          method:"DELETE",
+          headers:{
+            'authorization': 'bearer ' + localStorage.getItem('token'),
+            'content-type': 'application/json'          
+            },
+          body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), userRights:parseInt(localStorage.getItem('userRights'))})
+        });
+        localStorage.removeItem('userId');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userRights');
+        this.$router.push({ name: "Login" });
+      }
+    },
+    async saveProfil(e){
+      e.preventDefault()
+      e.stopPropagation()
+      await fetch(this.$store.state.src + 'user/' + parseInt(localStorage.getItem('userId')),{
+        method:"PATCH",
         headers:{
           'authorization': 'bearer ' + localStorage.getItem('token'),
           'content-type': 'application/json'          
-      },
-      body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), userRights:parseInt(localStorage.getItem('userRights'))})
-    });
-      localStorage.removeItem('userId');
-      localStorage.removeItem('token');
-      localStorage.removeItem('userRights');
-      this.$router.push({ name: "Login" });
-    },
-
-    async save(){
-
+          },
+        body: JSON.stringify({
+          userId:parseInt(localStorage.getItem('userId')),
+          new_email: this.profil.email,
+          new_firstname: this.profil.firstname,
+          new_lastname: this.profil.lastname,
+          new_department: this.profil.department
+        })
+      });
+      this.updated = true;
+      setTimeout(()=>{  this.updated = false; }, 3000);
     }
 
   }
@@ -96,4 +125,7 @@ export default {
 </script>
 
 <style lang="scss">
+.updatedProfil{
+  color: red;
+}
 </style>

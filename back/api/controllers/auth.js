@@ -2,15 +2,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const cryptojs = require('crypto-js/hmac-sha512');
 const nodemailer = require('nodemailer');
 const generator = require('generate-password');
 
 exports.sign = (req, res, next) => {
-  const emailCryptoJs = cryptojs(req.body.email, `${process.env.EMAIL_CRYPTOJS}`).toString();
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
-      User.create({ email: emailCryptoJs, firstname: req.body.firstname, lastname: req.body.lastname, department: req.body.department, password: hash, creation_date: Date(), is_connected: Date() })
+      User.create({ email: req.body.email, firstname: req.body.firstname, lastname: req.body.lastname, department: req.body.department, password: hash, creation_date: Date(), is_connected: Date() })
         .then(user => res.status(201).json({ user, message: 'Utilisateur créé' }))
         .catch(() => res.status(400).json({ error: 'Utilisateur non créé' }));
     })
@@ -18,9 +16,8 @@ exports.sign = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
-  const emailCryptoJs = cryptojs(req.body.email, `${process.env.EMAIL_CRYPTOJS}`).toString();
   //search in database if user exist
-  User.findOne({ attributes: ['id', 'email', 'password', 'rights'], where: { email: emailCryptoJs } })
+  User.findOne({ attributes: ['id', 'email', 'password', 'rights'], where: { email: req.body.email } })
     .then(user => {
       if (!user) {
         return res.status(400).json({ error: 'Utilisateur non trouvé!' })
@@ -46,8 +43,7 @@ exports.login = (req, res, next) => {
 };
 
 exports.forgot = (req, res, next) => {
-  const emailCryptoJs = cryptojs(req.body.email, `${process.env.EMAIL_CRYPTOJS}`).toString();
-  User.findOne({ attributes: ['email', 'password'], where: { email: emailCryptoJs } })
+  User.findOne({ attributes: ['email', 'password'], where: { email: req.body.email } })
     .then(user => {
       if (!user) {
         return res.status(400).json({ error: 'Email non trouvé' })
@@ -57,7 +53,7 @@ exports.forgot = (req, res, next) => {
       //enregistrement du nouveau mot de passe crypté
       bcrypt.hash(new_pass, 10)
         .then(hash => {
-          User.update({ password: hash }, { where: { email: emailCryptoJs } })
+          User.update({ password: hash }, { where: { email: req.body.email } })
             .then(() => {
               //preparing and sending email
               const smtpConfig = {

@@ -2,6 +2,7 @@
 const Message = require('../models/Message');
 const User = require('../models/User');
 const { Op, ForeignKeyConstraintError } = require("sequelize");
+const { findOne } = require('../models/Message');
 //const fs = require('fs');
 
 exports.newMessage = (req, res, next) => {
@@ -52,23 +53,41 @@ exports.modifyMessage = (req, res, next) => {
 
 exports.lastsMessages = (req, res, next) => {
     //find 10 last messages (responses includes)
-    Message.findAll({
+    let answer = {
+        count : 0,
+        list:[]
+    };
+    let tmp;
+    Message.findAndCountAll({
         order:[['creation_date', 'DESC']],
+        offset: 10 * req.body.pageNbr - 10,
         limit: 10
     })
-        .then(list=>{
-            //TODO quand title == null, afficher title du parent_msg_id 
-            //impossible avant le res car le format de list est trop exotique
-            // for(let i = list.length;i>0;i--){
-                // if(list[i].title === null){
-                    //list[i].title = "test"
-                //}
-            // };
-            res.status(200).json({list, message:'10 derniers messages'})
+        .then(async list=>{
+            answer.count = list.count;
+            for(let i = 0; i<list.rows.length;i++){
+                tmp = list.rows[i].dataValues;
+                if(tmp.title === null || tmp.title === ""){
+                    console.log('before '+ tmp.title) //NULL
+                    tmp.title = await findTitle(tmp.parent_msg_id); //FIXME fct supprime title au lieu de le remplacer dans l'objet final!! tmp.title passe de null a undefined
+                    console.log('after '+ tmp.title) //UNDEFINED
+                }
+                answer.list.push(tmp)
+            };
+            res.status(200).json({...answer, message:'10 derniers messages'})
         })
-        .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));  
-        //TODO n'affichera pas le titre des reponses car NULL ni le titre de leurs éléments parents
+        .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));     
 };
+
+async function findTitle(parentId){
+    Message.findOne(
+        {attributes:['title'], 
+        where:{id:parentId}})
+        .then(patate=> {console.log(patate.dataValues.title); //OK prend bien la valeur du titre du parent
+            return patate.dataValues.title});
+};
+
+
 exports.viewMessage = (req, res, next) => {
     //find asked message
     Message.findOne({

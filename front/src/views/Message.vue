@@ -1,10 +1,11 @@
 <template>
-  <router-link to="/home/list"><Btn msg="Retour à la liste des derniers messages"/></router-link>
+  <router-link :to="{ name: 'List', params : {pageId : 1 }}"><Btn msg="Retour à la liste des derniers messages"/></router-link>
   <div class="originalMsg">
     <h3>{{ originMsg.title }} (msgId {{ $route.params.msgId }})</h3>
-    <p>Auteur : {{ originMsg.creator_id }} - Date de rédaction: {{ originMsg.creation_date }}</p><!--TODO format date et récup créateur name (fk user tab)-->
-    <p class="content">{{ originMsg.content }}</p>
-
+    <p>Auteur : {{ originMsg.creator_id }} - Date de rédaction: {{ originMsg.creation_date }}</p>
+    <!--TODO format date et récup créateur name (fk user tab)-->
+    <div class="content">{{ originMsg.content }}</div> 
+  <!--TODO affiche les balises html au lieu d'un beau formatage-->
   </div>
 </template>
 
@@ -29,7 +30,7 @@ export default {
     });
     currentMsg = await currentMsg.json();
     this.originMsg = currentMsg.msg;
-    //TODO trouver et afficher réponses
+    //FIXME trouver et afficher réponses
   },
   components:{
     Btn
