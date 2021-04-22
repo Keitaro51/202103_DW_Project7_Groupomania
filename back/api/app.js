@@ -9,11 +9,17 @@ const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 
 //connection to database
-//TODO pool?
 
 (async function() {
   try {
-    const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`);
+    const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`,{
+      pool:{ //FIXME what is pool? dépend des param de l'hebergeur?
+        max:5,
+        min:0,
+        acquire:3000,
+        idle:10000 
+      }
+    });
     await sequelize.authenticate();
     console.log('Connection has been established successfully');
   } catch (error) {

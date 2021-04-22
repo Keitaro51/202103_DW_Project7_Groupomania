@@ -10,6 +10,8 @@ exports.disconnect = (req, res, next) => {
     {where: {id: req.body.userId }}
     )
     .then(()=>res.status(200).json({message: 'Déconnecté'}))
+//FIXME si l'utilisateur ne se déco pas et ferme son nav/fenetre puis reviens? actuellement, si token valide, comment rediriger sur page de garde sans repasser par login?
+
 };
 
 exports.viewProfil = (req, res, next) => {

@@ -13,6 +13,6 @@ const Department = sequelize.define('Department', {
     allowNull: false,
     unique: true
   }
-}, {tableName: 'departments', timestamps: false});
+}, {tableName: 'departments', timestamps: false, underscored: true});
 
 module.exports = Department;

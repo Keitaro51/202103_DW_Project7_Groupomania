@@ -43,6 +43,10 @@ const routes = [
       path: 'message/new',
       name: "NewMessage",
       component: NewMessage      
+    },{
+      path: 'message/modify',
+      name : "Modify",
+      component: NewMessage
     }]
   },{ path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }, 
 ]

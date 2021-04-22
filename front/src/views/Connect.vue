@@ -77,11 +77,11 @@ export default {
       });
       
       if (login.ok == true) {
-        login = await login.json();//TODO parsint à l'enregistrement plutot qu'au getitem
-        console.log(login)
-        localStorage.setItem("userId", login.userId); //TODO localStorage ou $store.state?
+        login = await login.json();
+        localStorage.setItem("userId", login.userId);
         localStorage.setItem("userRights", login.userRights); //TODO regrouper les setItem en une commande?
         localStorage.setItem("token", login.token);
+        localStorage.setItem("lastTimeConnected", login.lastTimeConnected)
         this.$router.push({ name: 'List', params : {pageId : 1 }});
       } else {
         alert("Email / mot de passe érroné ou manquant !");

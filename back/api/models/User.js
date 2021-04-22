@@ -1,11 +1,12 @@
+// @ts-nocheck
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`);
 
 const User = sequelize.define('User', {
   id: {
-    type: DataTypes.SMALLINT.UNSIGNED,
+    type: DataTypes.SMALLINT.UNSIGNED,//FIXME UUID
     allowNull: false,
-    autoIncrement:true,
+    autoIncrement:true,//defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
   email: {
@@ -26,7 +27,7 @@ const User = sequelize.define('User', {
     allowNull: false
   },
   password: {
-    type: DataTypes.STRING(200),//TODO varchar augmenté car hash trop long. Compromis?
+    type: DataTypes.STRING(200),
     allowNull: false
   },
   creation_date: {
@@ -50,6 +51,15 @@ const User = sequelize.define('User', {
   avatar: {
     type: DataTypes.STRING(50)
   }
-}, {tableName: 'users', timestamps: false});
+},{
+  tableName: 'users', 
+  timestamps: false,
+  underscored: true,
+  classMethods:{
+    associate: function(models){
+      models.User.hasMany(models.Message)
+    }
+  }
+});
 
 module.exports = User;

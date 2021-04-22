@@ -7,6 +7,7 @@ module.exports = (req,res,next)=>{
         const decodedToken = jwt.verify(token, process.env.APP_SECRET);
         const userId = decodedToken.userId;
         if((!req.body.userId) || (req.body.userId && req.body.userId !== userId)){
+            //FIXME remplacer par != permettrait d'enlever tous les parseint(localstorage... du front?)
             throw 'User ID non valable!';
         }
         next();

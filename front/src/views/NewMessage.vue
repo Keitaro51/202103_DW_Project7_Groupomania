@@ -1,8 +1,8 @@
 <template>
   <h3>Nouveau message</h3>
-  <form >
-    <label for="title">Titre (max 250 caractères)</label>
-    <input
+  <form method="post" @submit="saveMsg">
+    <label v-if="!$route.query.responseTo" for="title">Titre (max 250 caractères)</label>
+    <input v-if="!$route.query.responseTo"
       v-model="title"
       class="title"
       type="text"
@@ -11,6 +11,8 @@
       required
       maxlength="250"
     />
+    <!--FIXME titre en query si modify => value="?"-->
+    <!--FIXME content en query si modify-->
     <Editor
       v-model="content"
       class="textcontent"
@@ -32,9 +34,10 @@
       }"
     >
     </Editor>
-    <!--router link Enregistrer ne marche pas. Fetch ok, maiis url reste, + ?title=...-->
-    <Btn msg="Enregistrer" @click="saveMsg"/>
-    <router-link :to="{ name: 'List', params : {pageId : 1 }}"><Btn msg="Annuler" /></router-link>
+    <!--FIXME router link Enregistrer ne marche pas. Fetch ok, maiis url reste, + ?title=...-->
+    <!-- <Btn msg="Enregistrer" @click ="saveMsg"/> -->
+    <Btn msg="Enregistrer" />
+    <router-link :to="{ name: 'List', params : {pageId:1 }}"><Btn msg="Annuler" /></router-link>
   </form>
 </template>
 
@@ -57,20 +60,29 @@ export default {
   props: {
     msg: String,
   },
+  watcher:{
+    //FIXME pas savoir, modifier certains éléments de design selon si new message, response ou modify qui pointent tous vers le même compsant
+  },
   methods:{
-    async saveMsg(){
+    //enregistre un nouveau message/réponse en fonction du format de l'url
+    async saveMsg(e){
+      e.preventDefault();
+      e.stopPropagation();
       await fetch(this.$store.state.src + 'message/new',{
         method: "POST",
         headers: {
           'authorization': 'bearer ' + localStorage.getItem('token'),
           'content-type': 'application/json'          
         },
-        body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), title: this.title,content: this.content})
+        body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), title: this.title,content: this.content, parent_msg_id:this.$route.query.responseTo})
       });
-      this.$router.push({ name: 'List', params : {pageId : 1 }});
+      this.$router.push({ name: 'List', params : {pageId : 1 }}); 
+      // FIXME redirige vers http://localhost:8080/?title=Test#/home/list/1. 
+      // URL Ok si @submit dans form mais message d'erreur
     }
   },
   beforeCreate(){
+    
       this.$store.dispatch('isnewmsgpage')
   },
   unmounted(){

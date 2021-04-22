@@ -2,7 +2,6 @@
   <h3>Liste des 10 derniers messages</h3>
   <table>
     <tr> 
-      <th></th>
       <th>
         Titre du message d'origine
       </th>
@@ -17,23 +16,22 @@
       </th>
     </tr>
     <tr v-for="msg of msgList" :key="msg.id" :class="`${msg.id}`">
-      <td>
-        {{ msg.id }}<!--TODO gestion de la pastille new v-if? si date dernière modif < last connected date (récupérer is_connected depuis l'api?-->
-      </td>
       <td class="title">
-        {{ msg.title }}<!--FIXME recupérer titre du parent quand pas de titre (reponse)(FK?)-->
+        {{ msg.title }}
+        <p v-if="checkNew(msg.creation_date) == true">NEW</p>
       </td>
       <td class="content">
-        {{ removeTag(msg.content) }}
+        {{ msg.content }}<!--FIXME remove html tags(msg.content) -->
       </td>
-      <td class="creator">
+      <td class="creator"> 
+        <!--FIXME si message puis reponses = 2 lignes new. pas faux mais pas opti-->
         {{ msg.creator_id }}<!--FIXME recupérer nom plutot que l'id (FK?)-->
       </td>
       <td class="lastdate">
         {{ formatedDate(msg.creation_date) }}
       </td>
       
-      <router-link :to="{ name: 'Message', params: { msgId : msg.id }} "><Btn class="Btn" msg="Voir"/></router-link>
+      <router-link :to="{ name: 'Message', params: { msgId : msg.id }, query:{parentMsg : msg.parent_msg_id}} "><Btn class="Btn" msg="Voir"/></router-link>
     </tr>
   </table>
   <div class="page_counter">
@@ -66,7 +64,7 @@ export default {
     }
   },
   //TODO reload pas opti, <router-view :key="$route.path" /> ??
-  async beforeCreate(){
+  async beforeCreate(){//FIXME si un message et une reponse créée, réponse apparait avec et pas à la place du message
       let lasts = await fetch(this.$store.state.src + 'message/lasts',{
         method: "POST",
         headers: {
@@ -84,10 +82,18 @@ export default {
       formated_date = new Date(formated_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour:'numeric', minute:'numeric' })
       return formated_date
     },
-    removeTag(formated_content){
-      console.log(formated_content)
-      //FIXME remove tag - regex ou npm html-to-text?
+    checkNew(date){
+      let msgDate= new Date(date).getTime()
+      let lastTimeConnected = new Date(localStorage.getItem('lastTimeConnected')).getTime()
+      if (msgDate - lastTimeConnected > 0){ 
+        //TODO changer pour prendre en compte last connection
+        return true
+      }
     }
+    // removeTag(formated_content){
+    //   console.log(formated_content)
+    //   //FIXME remove tag - regex ou npm html-to-text?
+    // }
   }
 };
 </script>

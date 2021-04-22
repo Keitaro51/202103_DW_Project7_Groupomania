@@ -2,13 +2,16 @@
 const Message = require('../models/Message');
 const User = require('../models/User');
 const { Op, ForeignKeyConstraintError } = require("sequelize");
-const { findOne } = require('../models/Message');
+const { findOne, belongsTo } = require('../models/Message');
 //const fs = require('fs');
 
 exports.newMessage = (req, res, next) => {
-    Message.create({creator_id: req.body.userId, creation_date: Date(), title: req.body.title, content:req.body.content, parent_msg_id: req.body.parent_msg})
+    Message.create({creator_id: req.body.userId, creation_date: Date(), title: req.body.title, content:req.body.content, parent_msg_id: req.body.parent_msg_id})
         .then(()=>res.status(201).json({message:'Message enregistré'}))
-        .catch(error => res.status(400).json({error, message:'Message non enregistré'}));  
+        .catch(error => {
+            console.log("----------",error);
+            res.status(400).json({error, message:'Message non enregistré'})
+        });  
 };
 
 //ajouter suppression des messages enfants (réponses)
@@ -26,8 +29,8 @@ exports.deleteMessage = (req, res, next) => {
                         [Op.or]: [{ id:req.body.messageId }, { parent_msg_id:req.body.messageId }]
                     }
                 })
-                    .then(()=>res.status(200).json({message:'Message supprimé'}))
-                    .catch(error => res.status(400).json({error, message:'Message non supprimé'}));  
+                    .then(()=>res.status(200).json({message:'Message(s) supprimé(s)'}))
+                    .catch(error => res.status(400).json({error, message:'Message(s) non supprimé(s)'}));  
             }else{
                 throw error ='Opération non autorisée pour cet utilisateur!'
             }
@@ -59,34 +62,37 @@ exports.lastsMessages = (req, res, next) => {
     };
     let tmp;
     Message.findAndCountAll({
+        //FIXME FK 
+        include:[
+            {model:User,
+            required: true,
+            all:true}
+        ],
         order:[['creation_date', 'DESC']],
         offset: 10 * req.body.pageNbr - 10,
-        limit: 10
+        limit: 10,
+        
     })
-        .then(async list=>{
-            answer.count = list.count;
-            for(let i = 0; i<list.rows.length;i++){
-                tmp = list.rows[i].dataValues;
-                if(tmp.title === null || tmp.title === ""){
-                    console.log('before '+ tmp.title) //NULL
-                    tmp.title = await findTitle(tmp.parent_msg_id); //FIXME fct supprime title au lieu de le remplacer dans l'objet final!! tmp.title passe de null a undefined
-                    console.log('after '+ tmp.title) //UNDEFINED
-                }
-                answer.list.push(tmp)
-            };
+        .then( async list=>{
+                answer.count = list.count;
+                for(let i = 0; i<list.rows.length;i++){
+                    tmp = list.rows[i].dataValues;
+                    if(tmp.title === null || tmp.title == ""){
+                        tmp.title = (await findTitle(tmp.parent_msg_id)).title;
+                    }
+                    answer.list.push(tmp)
+                };
             res.status(200).json({...answer, message:'10 derniers messages'})
         })
-        .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));     
+        .catch(error => {
+            console.log('///// ' + error);
+            res.status(400).json({error, message:'Messages non récupérés'})});     
 };
-
-async function findTitle(parentId){
-    Message.findOne(
+function findTitle(parentId){
+    return Message.findOne(
         {attributes:['title'], 
         where:{id:parentId}})
-        .then(patate=> {console.log(patate.dataValues.title); //OK prend bien la valeur du titre du parent
-            return patate.dataValues.title});
 };
-
 
 exports.viewMessage = (req, res, next) => {
     //find asked message
@@ -99,3 +105,13 @@ exports.viewMessage = (req, res, next) => {
         })
         .catch(error => res.status(error.status | 400).json({error, message:error.message | 'Message non récupéré'}));  
 };
+
+exports.responseList = (req, res, next) => { //TODO récupérer en même temps que le parent dans viewMessage
+    //récupère la liste d'id de totues les réponses à un message
+    Message.findAll({
+        where:{parent_msg_id:req.params.id},
+        order:[['creation_date', 'ASC']]
+    })
+    .then(list=>res.status(200).json({list, message:`Liste des réponses au message id:${req.params.id} récupérée`}))
+    .catch(error => res.status(400).json({error, message:`Liste des réponses au message id:${req.params.id} non récupérée`}));
+}

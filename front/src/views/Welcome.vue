@@ -40,6 +40,7 @@ export default {
       localStorage.removeItem('userId')
       localStorage.removeItem('token')
       localStorage.removeItem('userRights')
+      localStorage.removeItem('lastTimeConnected')
     }
   }
 };

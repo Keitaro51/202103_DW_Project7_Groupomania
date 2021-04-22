@@ -17,11 +17,12 @@ exports.sign = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   //search in database if user exist
-  User.findOne({ attributes: ['id', 'email', 'password', 'rights'], where: { email: req.body.email } })
+  //FIXME mettre à jour is_connected après chaque action
+  User.findOne({ attributes: ['id', 'email', 'password', 'rights', 'is_connected'], where: { email: req.body.email } })
     .then(user => {
       if (!user) {
         return res.status(400).json({ error: 'Utilisateur non trouvé!' })
-      }
+      }//FIXME plusieurs niveaux d'erreur, faut il tout mettre dans la doc?
       bcrypt.compare(req.body.password, user.password)
         .then(valid => {
           if (!valid) {
@@ -30,6 +31,7 @@ exports.login = (req, res, next) => {
           res.status(200).json({
             userId: user.id,
             userRights:user.rights,
+            lastTimeConnected:user.is_connected,
             token: jwt.sign(
               { userId: user.id },
               process.env.APP_SECRET,
