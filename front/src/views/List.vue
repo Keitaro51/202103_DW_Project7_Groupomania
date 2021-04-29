@@ -18,14 +18,14 @@
     <tr v-for="msg of msgList" :key="msg.id" :class="`${msg.id}`">
       <td class="title">
         {{ msg.title }}
-        <p v-if="checkNew(msg.creation_date) == true">NEW</p>
+        <p v-if="checkNew(msg.creation_date) == true" class="new">NEW</p>
       </td>
       <td class="content">
         {{ msg.content }}<!--FIXME remove html tags(msg.content) -->
       </td>
       <td class="creator"> 
         <!--FIXME si message puis reponses = 2 lignes new. pas faux mais pas opti-->
-        {{ msg.creator_id }}<!--FIXME recupérer nom plutot que l'id (FK?)-->
+        {{ msg.User.firstname +' '+ msg.User.lastname}}
       </td>
       <td class="lastdate">
         {{ formatedDate(msg.creation_date) }}
@@ -41,7 +41,6 @@
     <router-link v-show="$route.params.pageId < Math.ceil(count/10)" :to="{ name: 'List', params : {pageId : parseInt($route.params.pageId) + 1 }}"> Next</router-link>
     <router-link :to="{ name: 'List', params : {pageId : Math.ceil(count/10)}}">Last </router-link>
   </div>
-  <!--TODO insérer tiret entre pages-->
 </template>
 
 <script>
@@ -58,13 +57,15 @@ export default {
       count:0
     }
   },
-  watch: { 
-    $route(to, from) {
-      if(to !== from){location.reload();}
-    }
-  },
+  // watch: { 
+  //   $route(to, from) {
+  //     if(to !== from){location.reload();}
+  //   }
+  // },
   //TODO reload pas opti, <router-view :key="$route.path" /> ??
-  async beforeCreate(){//FIXME si un message et une reponse créée, réponse apparait avec et pas à la place du message
+  async beforeCreate(){
+    //FIXME si un message et une reponse créée, réponse apparait avec et pas à la place du message
+    //FIXME mes propres messages apparaissent en new :)
       let lasts = await fetch(this.$store.state.src + 'message/lasts',{
         method: "POST",
         headers: {
@@ -78,6 +79,7 @@ export default {
       this.msgList = this.msgList.list;
   },
   methods:{
+    //FIXMErendre cette fonction globale
     formatedDate(formated_date){
       formated_date = new Date(formated_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour:'numeric', minute:'numeric' })
       return formated_date
@@ -101,15 +103,25 @@ export default {
 <style lang="scss">
 table{
   border-collapse : collapse;
+  width:75%;
+  margin:auto;
   tr :not(a){
     border:solid 1px black;
-    padding:5px;
   }
   .Btn{
     margin:25% 10px 25% 10px;
   }
-  width:75%;
-  margin:auto
+  td{
+    position:relative;
+    .new{
+      position: absolute;
+      top:10px;
+      left:10px;
+      color:red;
+      margin:0;
+      padding:5px;
+    }
+  }
 }
 a{
   font-weight: bolder;
@@ -121,4 +133,5 @@ a{
   display:flex;
   justify-content: space-between;
 }
+
 </style>

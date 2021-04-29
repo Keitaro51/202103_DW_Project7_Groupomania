@@ -65,6 +65,8 @@ exports.departmentList = async (req, res, next) =>{
 
 exports.deleteProfil = async (req, res, next) =>{
   //empeche un autre utilisateur de supprimer un profil, sauf admin
+  //FIXME  "Cannot delete or update a parent row: a foreign key constraint fails (`groupomania_test`.`messages`, CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT)",
+  //comment oraganiser la suppression d'un utilisateur? supprimer les mesages associés??
   if((req.body.userId == req.params.id) || (req.body.userRights == 3)){
     await User.destroy({ where: { id: req.params.id } })
       .then(()=>res.status(200).json({message:'Profil supprimé'}))

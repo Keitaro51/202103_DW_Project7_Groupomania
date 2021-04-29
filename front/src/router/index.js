@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Connect from '../views/Connect.vue'
 import Signup from '../views/Signup.vue'
 import Reinit from '../views/Reinit.vue'
@@ -28,15 +28,15 @@ const routes = [
     name: 'Welcome',
     component: Welcome,
     children: [{
-      path: 'list/:pageId',
+      path: 'list/:pageId',//TODO regex sur pageId
       name:"List",
       component: List
     },{
-      path: 'profil/:userId',
+      path: 'profil/:userId',//TODO regex sur userId
       name:"Profil",
       component: Profil
     },{
-      path: 'message/:msgId',
+      path: 'message/:msgId',//TODO regex sur msgId
       name: "Message",
       component: Message      
     },{
@@ -44,15 +44,18 @@ const routes = [
       name: "NewMessage",
       component: NewMessage      
     },{
-      path: 'message/modify',
+      path: 'message/modify/:msgId',
       name : "Modify",
       component: NewMessage
     }]
-  },{ path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }, 
+  },{ path: '/:pathMatch(.*)*', 
+      name: 'not-found', 
+      component: NotFound 
+  }
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 

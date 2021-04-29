@@ -14,5 +14,5 @@ const Department = sequelize.define('Department', {
     unique: true
   }
 }, {tableName: 'departments', timestamps: false, underscored: true});
-
+//Department.sync({force:true});
 module.exports = Department;

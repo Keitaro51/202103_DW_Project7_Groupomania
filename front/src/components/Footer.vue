@@ -1,10 +1,10 @@
 <template>
   <footer>
-    <ui>
+    <ul>
       <li>Contact</li>
       <li>Mentions légales</li>
       <li>Plan du site</li>
-    </ui>
+    </ul>
   </footer>
 </template>
 

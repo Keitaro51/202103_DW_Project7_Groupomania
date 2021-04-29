@@ -38,10 +38,10 @@
         <option v-for="department of departments" :key="department.id" :value="department.id">{{ department.name }}</option> 
       </select>
       <!-- TODO rappeler/généraliser la fonction de création de liste dprt-->
-      <router-link :to="{ name: 'List', params: {pageId : 1}}"><Btn msg="Annuler" /></router-link>
       <Btn msg="Enregistrer" />
     </form>
-    <Btn msg="Supprimer le profil" @click="deleteProfil"/>
+    <router-link :to="{ name: 'List', params: {pageId : 1}}"><Btn msg="Annuler" /></router-link>
+    <Btn msg="Supprimer le profil" @click="deleteProfil"/>    
 </template>
 
 <script>

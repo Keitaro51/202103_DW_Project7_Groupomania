@@ -13,6 +13,6 @@ const Right = sequelize.define('Right', {
     allowNull: false,
     unique: true
   }
-}, {tableName: 'rightos', timestamps: false, underscored: true});
+}, {tableName: 'rights', timestamps: false, underscored: true});
 
 module.exports = Right;

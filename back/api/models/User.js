@@ -4,9 +4,9 @@ const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB
 
 const User = sequelize.define('User', {
   id: {
-    type: DataTypes.SMALLINT.UNSIGNED,//FIXME UUID
+    type: DataTypes.SMALLINT.UNSIGNED,
     allowNull: false,
-    autoIncrement:true,//defaultValue: DataTypes.UUIDV4,
+    autoIncrement:true,
     primaryKey: true
   },
   email: {
@@ -53,13 +53,9 @@ const User = sequelize.define('User', {
   }
 },{
   tableName: 'users', 
-  timestamps: false,
+  timestamps: false, 
   underscored: true,
-  classMethods:{
-    associate: function(models){
-      models.User.hasMany(models.Message)
-    }
-  }
 });
 
+//User.sync({force:true});
 module.exports = User;

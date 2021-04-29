@@ -9,7 +9,6 @@ const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 
 //connection to database
-
 (async function() {
   try {
     const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`,{
@@ -44,8 +43,9 @@ if(process.env.ENV == 'dev'){
 app.use(express.json()); 
 
 //api routes
+app.use('/api/user', userRoutes);
 app.use('/api/message', messageRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+
 
 module.exports = app;
