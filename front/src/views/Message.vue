@@ -1,34 +1,31 @@
 <template>
-  <p>Reminder format response {{ responses }}</p>
   <router-link :to="{ name: 'List', params : {pageId : 1 }}"><Btn msg="Retour à la liste des derniers messages"/></router-link>
   <div class="originalMsg">
     <h3>{{ originMsg.title }}</h3>
-    <!--FIXME firstname et lastname s'affichent mais erreur {{ originMsg.User.firstname}} {{originMsg.User.lastname}}-->
-    <!-- utilisation d'une méthode {{ fullname(originMsg.User.firstname, originMsg.User.lastname) }}-->
-    <p>Auteur :  {{ fullname }} - Date de rédaction: {{ formatedDate(originMsg.creation_date) }}</p>
-    <!--TODO format date-->
-    <div class="content">
-      {{ originMsg.content }}<br>
+    <p>Auteur :  {{ fullname(originCreatorInfo.firstname, originCreatorInfo.lastname) }} - Date de rédaction: {{ displayedDate(originMsg.creation_date) }}</p>
+    <div class="content" >
+      <span v-html="originMsg.content"/><br>
       <hr>
       <router-link :to="{ name: 'NewMessage', query:{ responseTo : originMsg.id}}" ><Btn msg="Répondre" /></router-link>
-      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id}, query:{ creatorId: originMsg.creator_id ,title : originMsg.title, content : originMsg.content}}"><Btn msg="Modifier" v-if="allowAction"/></router-link>
-      <Btn msg="Supprimer" @click="deleteMsg(originMsg.id, originMsg.creator_id)" v-if="allowAction"/>
+      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id}, query:{ creatorId: originMsg.creator_id ,title : originMsg.title, content : originMsg.content}}"><Btn msg="Modifier" v-if="allowAction(originMsg.creator_id)"/></router-link>
+      <Btn msg="Supprimer" @click="deleteMsg(originMsg.id, originMsg.creator_id)" v-if="allowAction(originMsg.creator_id)"/>
     </div> 
-  <!--TODO affiche les balises html au lieu d'un beau formatage-->
   </div>
-  <h4>Réponses</h4>
+  <h4>Réponses ({{ responses.length }})</h4>
   <div v-if="responses.length>0" class="responses">
     <div v-for="(response, index) in responses" :key="index" class="response">
-      <p>{{ response.content }}</p>
+      <span v-html="response.content"/>
       <hr>
-      <p> Auteur : {{ response.creator_id }} - Date de rédaction :{{ formatedDate(response.creation_date) }}</p>
-      <Btn msg="Supprimer" @click="deleteMsg(response.id, response.creator_id)"/>
+      <p> Auteur : {{ fullname(response.User.firstname, response.User.lastname) }} - Date de rédaction :{{ displayedDate(response.creation_date) }}</p>
+      <router-link :to="{ name: 'Modify', params:{msgId : response.id}, query:{ responseTo: true, creatorId: response.creator_id , content : response.content}}"><Btn msg="Modifier" v-if="allowAction(response.creator_id)"/></router-link>
+      <Btn msg="Supprimer" @click="deleteMsg(response.id, response.creator_id)" v-if="allowAction(response.creator_id)"/>
     </div>
   </div>
 </template>
 
 <script>
 import Btn from "../components/Button.vue";
+import formatDate from "../tools";
 
 export default {
   name: "Message",
@@ -38,19 +35,19 @@ export default {
   data(){
     return{
       originMsg:{},
-      responses:[],
-      fullname:""
-    }
-  },
-  computed:{
-    //autorise l'affichage ou non de certains boutons selon l'utilisateur log / createur du message
-    //FIXME ne marche que sur originMsg, message principal. Affecter aux reponses en passant un argument mais bug car peut pas mettre origin.qqch dans le template
-    allowAction(){
-      let allow = (this.originMsg.creator_id == localStorage.getItem('userId')) ? true : false
-      return allow
+      originCreatorInfo:"",
+      responses:[]
     }
   },
   methods:{
+    displayedDate(dateToFormat){
+      return formatDate(dateToFormat)//FIXME onligé de créer une methode pour appeler la methode importée? relou?
+    },
+    //autorise l'affichage ou non de certains boutons selon l'utilisateur log / createur du message ou status modérateur
+    allowAction(id){
+      let allow = ((id == localStorage.getItem('userId')) || (localStorage.getItem('userRights') == (2||3) )) ? true : false
+      return allow
+    },
     async deleteMsg(msgId, creatorId){
       await fetch (this.$store.state.src + 'message/',{
         method: "DELETE",
@@ -59,17 +56,15 @@ export default {
           'content-type': 'application/json'          
         },
         body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), msgCreatorId: creatorId, messageId: msgId})
-      });
-      this.$router.push({ name: 'List', params : {pageId : 1 }}); 
+      })
+      .then(response=>{ //FIXME plus simple pour gestion d'erreur? then et await at ame time? try catch?
+        (response.ok) ? (this.$router.push({ name: 'List', params : {pageId : 1 }})) : alert('Action non authorisée')
+      })
     },
-    formatedDate(formated_date){
-      formated_date = new Date(formated_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour:'numeric', minute:'numeric' })
-      return formated_date
-    },
-    // fullname(firstname, lastname){
-    //   let concat = firstname +' '+ lastname
-    //   return concat
-    // }
+    fullname(firstname, lastname){
+      let concat = firstname +' '+ lastname
+      return concat
+    }
   },
   async beforeCreate(){
     //analyse url pour préparer le fetch (message et reponses)
@@ -88,10 +83,7 @@ export default {
     });
     parentMsg = await parentMsg.json();
     this.originMsg = parentMsg.msg;
-    console.log(this.originMsg)
-    //FIXME pourquoi ça apparait sous forme de proxy?
-    //FIXME pourquoi devoir passer par un fullname?
-    this.fullname = this.originMsg.User.firstname +' '+ this.originMsg.User.lastname
+    this.originCreatorInfo = this.originMsg.User;
     
     //récupère tableau de réponses
     let responseList = await fetch(this.$store.state.src + 'message/responses/' + tmp,{ //FIXME si tmp:"" dans data, this.tmp perd sa valeur ici
@@ -102,9 +94,8 @@ export default {
       },
       body: JSON.stringify({userId:parseInt(localStorage.getItem('userId'))})
     });
-    responseList = await responseList.json()
-    this.responses = responseList.list
-    console.log(this.responses) 
+    responseList = await responseList.json();
+    this.responses = responseList.list;
   }
 };
 </script>

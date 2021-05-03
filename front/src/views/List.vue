@@ -6,7 +6,7 @@
         Titre du message d'origine
       </th>
       <th>
-        Aperçu du dernier message
+        Aperçu du dernier post
       </th>
       <th>
         Createur du message d'origine
@@ -20,15 +20,12 @@
         {{ msg.title }}
         <p v-if="checkNew(msg.creation_date) == true" class="new">NEW</p>
       </td>
-      <td class="content">
-        {{ msg.content }}<!--FIXME remove html tags(msg.content) -->
-      </td>
-      <td class="creator"> 
-        <!--FIXME si message puis reponses = 2 lignes new. pas faux mais pas opti-->
-        {{ msg.User.firstname +' '+ msg.User.lastname}}
+      <td class="content" v-html="msg.content.substr(0, 120)"/>
+      <td class="creator">
+        {{ msg.User.firstname +' '+ msg.User.lastname}} <!--FIXME la profondeur msg.User ne gêne pas comme dans l'autre component-->
       </td>
       <td class="lastdate">
-        {{ formatedDate(msg.creation_date) }}
+        {{ displayedDate(msg.creation_date) }}
       </td>
       
       <router-link :to="{ name: 'Message', params: { msgId : msg.id }, query:{parentMsg : msg.parent_msg_id}} "><Btn class="Btn" msg="Voir"/></router-link>
@@ -45,6 +42,7 @@
 
 <script>
 import Btn from "../components/Button.vue";
+import formatDate from "../tools";
 
 export default {
   name: "List",
@@ -57,15 +55,7 @@ export default {
       count:0
     }
   },
-  // watch: { 
-  //   $route(to, from) {
-  //     if(to !== from){location.reload();}
-  //   }
-  // },
-  //TODO reload pas opti, <router-view :key="$route.path" /> ??
   async beforeCreate(){
-    //FIXME si un message et une reponse créée, réponse apparait avec et pas à la place du message
-    //FIXME mes propres messages apparaissent en new :)
       let lasts = await fetch(this.$store.state.src + 'message/lasts',{
         method: "POST",
         headers: {
@@ -79,23 +69,16 @@ export default {
       this.msgList = this.msgList.list;
   },
   methods:{
-    //FIXMErendre cette fonction globale
-    formatedDate(formated_date){
-      formated_date = new Date(formated_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour:'numeric', minute:'numeric' })
-      return formated_date
+    displayedDate(dateToFormat){
+      return formatDate(dateToFormat)//FIXME onligé de créer une methode pour appeler la methode importée? relou?
     },
     checkNew(date){
       let msgDate= new Date(date).getTime()
       let lastTimeConnected = new Date(localStorage.getItem('lastTimeConnected')).getTime()
       if (msgDate - lastTimeConnected > 0){ 
-        //TODO changer pour prendre en compte last connection
         return true
       }
     }
-    // removeTag(formated_content){
-    //   console.log(formated_content)
-    //   //FIXME remove tag - regex ou npm html-to-text?
-    // }
   }
 };
 </script>
@@ -107,6 +90,9 @@ table{
   margin:auto;
   tr :not(a){
     border:solid 1px black;
+  }
+  .content *{
+    border:none
   }
   .Btn{
     margin:25% 10px 25% 10px;

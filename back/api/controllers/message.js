@@ -1,7 +1,7 @@
 //@ts-nocheck
 const User = require('../models/User');
 const Message = require('../models/Message');
-const { Op, ForeignKeyConstraintError } = require("sequelize");
+const { Op } = require("sequelize");
 
 exports.newMessage = (req, res, next) => {
     Message.create({creator_id: req.body.userId, creation_date: Date(), title: req.body.title, content:req.body.content, parent_msg_id: req.body.parent_msg_id})

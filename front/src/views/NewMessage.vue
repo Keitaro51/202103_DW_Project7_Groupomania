@@ -1,8 +1,8 @@
 <template>
   <h3>Nouveau message</h3>
   <form method="post" @submit="saveMsg">
-    <label v-if="!$route.query.responseTo" for="title">Titre (max 250 caractères)</label>
-    <input v-if="!$route.query.responseTo"
+    <label v-if="(!$route.query.responseTo)" for="title">Titre (max 250 caractères)</label>
+    <input v-if="(!$route.query.responseTo)"
       v-model="title"
       class="title"
       type="text"
@@ -92,6 +92,8 @@ export default {
   beforeCreate(){
       this.$store.dispatch('isnewmsgpage')
   },
+  //FIXME desactiver title si provient de modifier une reponse
+  //
   created(){
     if (this.$route.query.title)
       this.title = this.$route.query.title
