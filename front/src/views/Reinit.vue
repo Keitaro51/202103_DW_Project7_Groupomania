@@ -1,5 +1,5 @@
 <template>
-  <div class="Reinit">
+  <div class="Reinit" aria-label="Confirmation de 'lenvoi d'un nouveau mot de passe par email">
     <p>
       Votre mot de passe a été réinitialisé et un email a été envoyé à l'adresse indiquée
     </p>

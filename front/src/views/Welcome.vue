@@ -1,16 +1,16 @@
 <template>
-  <header>
+  <nav>
     <h2>Bienvenue</h2>
-    <router-link :to="{ name: 'Profil', params:{userId : currentUser}}" v-show="!this.$store.state.is_profil_page">
+    <router-link :to="{ name: 'Profil', params:{userId : currentUser}}" v-show="!this.$store.state.is_profil_page" aria-label="lien vers la page de profil">
       <Btn class="button" msg="Voir/modifier le profil" />
     </router-link>
-     <router-link :to="{ name: 'NewMessage'}" v-show="!this.$store.state.is_newmsg_page"> 
+     <router-link :to="{ name: 'NewMessage'}" v-show="!this.$store.state.is_newmsg_page" aria-label="lien vers la création d'un nouveau message"> 
       <Btn class="button" msg="Créer un nouveau message"/>
     </router-link>
     <router-link to="/">
-      <Btn class="button" msg="Deconnexion" @click="disconnect"/>
+      <Btn class="button" msg="Déconnexion" @click="disconnect" aria-label="bouton de déconnexion"/>
     </router-link>
-  </header>
+  </nav>
   <router-view/>
 </template>
 

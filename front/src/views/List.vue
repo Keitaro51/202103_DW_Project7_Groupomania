@@ -1,6 +1,6 @@
 <template>
-  <h3>Liste des 10 derniers messages</h3>
-  <table>
+  <h3>Liste des derniers messages</h3>
+  <table aria-label="Liste de derniers messages (10 par page)">
     <tr> 
       <th>
         Titre du message d'origine
@@ -16,33 +16,32 @@
       </th>
     </tr>
     <tr v-for="msg of msgList" :key="msg.id" :class="`${msg.id}`">
-      <td class="title">
+      <td class="title" aria-label="Titre du message d'origine">
         {{ msg.title }}
         <p v-if="checkNew(msg.creation_date) == true" class="new">NEW</p>
       </td>
-      <td class="content" v-html="msg.content.substr(0, 120)"/>
-      <td class="creator">
-        {{ msg.User.firstname +' '+ msg.User.lastname}} <!--FIXME la profondeur msg.User ne gêne pas comme dans l'autre component-->
+      <td class="content" v-html="msg.content.substr(0, 120)" aria-label="Contenu abrégé du message"/>
+      <td class="creator" aria-label="Auteur">
+        {{ msg.User.firstname +' '+ msg.User.lastname}} <!--TODO pourquoi la profondeur msg.User. ne gêne pas comme dans l'autre component-->
       </td>
-      <td class="lastdate">
+      <td class="lastdate" aria-label="Date de création du message">
         {{ displayedDate(msg.creation_date) }}
       </td>
-      
-      <router-link :to="{ name: 'Message', params: { msgId : msg.id }, query:{parentMsg : msg.parent_msg_id}} "><Btn class="Btn" msg="Voir"/></router-link>
+      <router-link :to="{ name: 'Message', params: { msgId : msg.id }, query:{parentMsg : msg.parent_msg_id}}" aria-label="Lien vers le message sélectionné"><Btn class="Btn" msg="Voir"/></router-link>
     </tr>
   </table>
-  <div class="page_counter">
-    <router-link :to="{ name: 'List', params : {pageId : 1 }}">First </router-link>
-    <router-link v-show="$route.params.pageId > 1" :to="{ name: 'List', params : {pageId : $route.params.pageId - 1 }}">Previous </router-link>
-    <router-link v-for="page in Math.ceil(count/10)" :key="page" :to="{ name: 'List', params : {pageId : page }}">{{ page }}</router-link>
-    <router-link v-show="$route.params.pageId < Math.ceil(count/10)" :to="{ name: 'List', params : {pageId : parseInt($route.params.pageId) + 1 }}"> Next</router-link>
-    <router-link :to="{ name: 'List', params : {pageId : Math.ceil(count/10)}}">Last </router-link>
+  <div class="page_counter" aria-label="Système de pagination">
+    <router-link :to="{ name: 'List', params : {pageId : 1 }}" aria-label="Retour à la première page de résultats">First </router-link>
+    <router-link v-show="$route.params.pageId > 1" :to="{ name: 'List', params : {pageId : $route.params.pageId - 1 }}" aria-label="Page de résultat précédente">Previous </router-link>
+    <router-link v-for="page in Math.ceil(count/10)" :key="page" :to="{ name: 'List', params : {pageId : page }}" aria-label="Une page de résultat">{{ page }}</router-link>
+    <router-link v-show="$route.params.pageId < Math.ceil(count/10)" :to="{ name: 'List', params : {pageId : parseInt($route.params.pageId) + 1 }}" aria-label="Page de résultat suivante"> Next</router-link>
+    <router-link :to="{ name: 'List', params : {pageId : Math.ceil(count/10)}}" aria-label="Lien vers la dernière page de résultats">Last </router-link>
   </div>
 </template>
 
 <script>
 import Btn from "../components/Button.vue";
-import formatDate from "../tools";
+import {formatDate} from "../tools";
 
 export default {
   name: "List",

@@ -2,7 +2,7 @@
     <h3>Profil</h3>
     <p>Membre depuis le : {{ profil.creation_date }}</p>
     <p class="updatedProfil" v-if="updated">Profil enregistré</p>
-    <form method="post" @submit="saveProfil">
+    <form method="post" @submit="saveProfil" aria-label="formulaire de visualisation / modification de mot de passe">
       <label for="email">Email</label>
       <input
         type="email"
@@ -12,8 +12,8 @@
         required
         placeholder="email@groupomania.com"
         v-model.lazy="profil.email" 
+        aria-label="Email associé au profil"
       /><!--TODO changement instant malgré lazy-->
-      <!--TODO autofocus marche pas Autofocus processing was blocked because a document's URL has a fragment '#/home/profil'.-->
       <label for="firstname">Prénom</label>
       <input
         type="text"
@@ -22,6 +22,7 @@
         required
         placeholder="profil.firstname"
         v-model.lazy="profil.firstname"
+        aria-label="Prénom associé au profil"
       />
       <label for="lastname">Nom</label>
       <input
@@ -31,17 +32,18 @@
         required
         placeholder="Gonzales"
         v-model.lazy="profil.lastname"
+        aria-label="Nom associé au profil"
       />
       <label for="department">Département</label>
-      <select name="department" v-model.lazy="profil.department">
+      <select name="department" v-model.lazy="profil.department" aria-label="liste déroulante des différents départements">
         <option value="">Choisissez votre service</option> 
         <option v-for="department of departments" :key="department.id" :value="department.id">{{ department.name }}</option> 
       </select>
       <!-- TODO rappeler/généraliser la fonction de création de liste dprt-->
-      <Btn msg="Enregistrer" />
+      <Btn msg="Enregistrer" aria-label="Bouton d'enregistrement des modifications apportées au profil"/>
     </form>
-    <router-link :to="{ name: 'List', params: {pageId : 1}}"><Btn msg="Annuler" /></router-link>
-    <Btn msg="Supprimer le profil" @click="deleteProfil"/>    
+    <router-link :to="{ name: 'List', params: {pageId : 1}}" aria-label="lien de retour à la liste des messages, sans enregistrement des modifications du profil"><Btn msg="Annuler"/></router-link>
+    <Btn msg="Supprimer le profil" @click="deleteProfil" aria-label="Bouton de suppression du profil avec confirmation requise"/>    
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
   <h2>CONNEXION</h2>
-  <form method="post" @submit="login">
+  <form method="post" @submit="login" aria-label="formulaire de connexion">
     <div class="connect">
       <label for="email">Email</label>
       <input
@@ -11,6 +11,7 @@
         required
         placeholder="my awesome email here"
         v-model.lazy="email"
+        aria-label="champ d'entrée d'email de connexion"
       />
       <label for="password">Mot de passe</label>
       <input
@@ -20,13 +21,13 @@
         required
         placeholder="my super password here"
         v-model.lazy="password"
+        aria-label="champ d'entrée de mot de passe"
       />
-      <Btn msg="Connexion" />
-      <a href="#" @click="forgot">Mot de passe oublié</a>
+      <Btn msg="Connexion" aria-label="bouton de connexion"/>
+      <a href="#" @click="forgot" aria-label="lien de réinitialisation de mot de passe (champ email requis)">Mot de passe oublié (champ email requis)</a>
       <hr />
       <p>Pas encore de compte?</p>
-      <router-link :to="{ name: 'Signup'}"><Btn msg="Créer un compte" /></router-link>
-      <!-- TODO router link devient btn dans a et pas a dans btn. CSS, cibler router_link ou a virtuel?-->
+      <router-link :to="{ name: 'Signup'}" aria-label="lien vers la page de création de compte"><Btn msg="Créer un compte" /></router-link>
     </div>
   </form>
 </template>

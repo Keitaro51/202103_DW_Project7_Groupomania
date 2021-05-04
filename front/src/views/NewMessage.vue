@@ -1,6 +1,6 @@
 <template>
   <h3>Nouveau message</h3>
-  <form method="post" @submit="saveMsg">
+  <form method="post" @submit="saveMsg" aria-label="Formulaire de création (ou de modification) de nouveau message (ou réponse), selon page de destination">
     <label v-if="(!$route.query.responseTo)" for="title">Titre (max 250 caractères)</label>
     <input v-if="(!$route.query.responseTo)"
       v-model="title"
@@ -10,6 +10,7 @@
       name="title"
       required
       maxlength="250"
+      aria-label="Titre du message"
     />
     <Editor
       v-model="content"
@@ -30,11 +31,12 @@
             alignleft aligncenter alignright | \
             bullist numlist outdent indent | help',
       }"
+      aria-label="Corps du message"
     >
     </Editor>
     
-    <Btn msg="Enregistrer" />
-    <router-link :to="{ name: 'List', params : {pageId:1 }}"><Btn msg="Annuler" /></router-link>
+    <Btn msg="Enregistrer" aria-label="Enregistrer le message"/>
+    <router-link :to="{ name: 'List', params : {pageId:1 }}" aria-label="Annuler l'action en cours et retour à la page des derniers messages"><Btn msg="Annuler" /></router-link>
   </form>
   
 </template>

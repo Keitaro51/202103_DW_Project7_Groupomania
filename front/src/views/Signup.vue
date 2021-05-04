@@ -1,6 +1,6 @@
 <template>
   <h2>INSCRIPTION</h2>
-  <form method="post" @submit="signup">
+  <form method="post" @submit="signup" aria-label="formulaire d'inscription">
     <label for="email">Email</label>
     <input
       type="email"
@@ -11,9 +11,10 @@
       pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
       placeholder="email@groupomania.com"
       v-model.lazy="user.email"
+      aria-label="champ email"
       
     />
-    <label for="password">Password (min 8 caractères dont 1 nombre)</label>
+    <label for="password">Password (min 8 caractères dont 1 chiffre)</label>
     <input
       type="text"
       name="password"
@@ -23,6 +24,7 @@
       required
       placeholder="Choose a password here"
       v-model.lazy="user.password"
+      aria-label="champ mot de passe (8 caractères minimum dont 1 chiffre)"
     />
     <label for="confirm">Confirmez votre mot de passe</label>
     <input
@@ -34,6 +36,7 @@
       required
       placeholder="Repeat your password here"
       v-model.lazy="confirmPassword"
+      aria-label="confirmation du mot de passe. Reproduction du mot de passe défini ci dessus"
     />
     <label for="firstname">Prénom</label>
     <input
@@ -43,6 +46,7 @@
       required
       placeholder="Jean Eude"
       v-model.lazy="user.firstname"
+      aria-label="Champ prénom"
     />
     <label for="lastname">Nom</label>
     <input
@@ -52,13 +56,15 @@
       required
       placeholder="Gonzales"
       v-model.lazy="user.lastname"
+      aria-label="Champ nom"
     />
     <label for="department">Département</label>
-    <select  name="department" v-model="user.department" required> <!--TODO créer composant liste reutilisable-->
+    <select  name="department" v-model="user.department" required aria-label="Choix du service de travail parmis une liste définie"> 
       <option value="">Choisissez votre service</option>
       <option v-for="department of departments" :key="department.id" :value="department.id">{{ department.name }}</option> 
     </select>
-    <Btn msg="S'inscrire" />
+    <!--TODO créer composant liste reutilisable-->
+    <Btn msg="S'inscrire" aria-label="Valider l'inscription"/>
   </form>
 </template>
 

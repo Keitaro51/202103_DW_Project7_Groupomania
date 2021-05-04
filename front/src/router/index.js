@@ -8,6 +8,7 @@ import List from '../views/List.vue'
 import Message from '../views/Message.vue'
 import NewMessage from '../views/NewMessage.vue'
 import NotFound from '../views/NotFound.vue'
+import Sitemap from '../views/Sitemap.vue'
 
 const routes = [
   {
@@ -23,6 +24,10 @@ const routes = [
     path: '/reinit',
     name: 'Reinit',
     component: Reinit
+  }, {
+    path: '/sitemap',
+    name: 'Sitemap',
+    component: Sitemap
   }, {
     path: '/home',
     name: 'Welcome',

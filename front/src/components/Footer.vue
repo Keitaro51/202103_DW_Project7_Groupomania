@@ -1,9 +1,9 @@
 <template>
   <footer>
     <ul>
-      <li>Contact</li>
-      <li>Mentions légales</li>
-      <li>Plan du site</li>
+      <li><a href="mailto:contact@groupomania.com" aria-label="email de contact">Contact</a></li>
+      <li aria-label="mentions légales du site">Mentions légales</li>
+      <li><router-link :to="{ name: 'Sitemap'}" aria-label="lien vers le plan du site" >Plan du site</router-link></li>
     </ul>
   </footer>
 </template>

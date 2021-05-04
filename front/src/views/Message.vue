@@ -1,31 +1,31 @@
 <template>
-  <router-link :to="{ name: 'List', params : {pageId : 1 }}"><Btn msg="Retour à la liste des derniers messages"/></router-link>
+  <router-link :to="{ name: 'List', params : {pageId : 1 }}" aria-label="Bouton de retour à la liste des message"><Btn msg="Retour à la liste des derniers messages"/></router-link>
   <div class="originalMsg">
-    <h3>{{ originMsg.title }}</h3>
-    <p>Auteur :  {{ fullname(originCreatorInfo.firstname, originCreatorInfo.lastname) }} - Date de rédaction: {{ displayedDate(originMsg.creation_date) }}</p>
+    <h3 aria-label="Titre du message">{{ originMsg.title }}</h3>
+    <p aria-label="Informations sur le message">Auteur :  {{ fullname(originCreatorInfo.firstname, originCreatorInfo.lastname) }} - Date de rédaction: {{ displayedDate(originMsg.creation_date) }}</p>
     <div class="content" >
-      <span v-html="originMsg.content"/><br>
+      <span v-html="originMsg.content" aria-label="contenu du Cessage"/><br>
       <hr>
-      <router-link :to="{ name: 'NewMessage', query:{ responseTo : originMsg.id}}" ><Btn msg="Répondre" /></router-link>
-      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id}, query:{ creatorId: originMsg.creator_id ,title : originMsg.title, content : originMsg.content}}"><Btn msg="Modifier" v-if="allowAction(originMsg.creator_id)"/></router-link>
-      <Btn msg="Supprimer" @click="deleteMsg(originMsg.id, originMsg.creator_id)" v-if="allowAction(originMsg.creator_id)"/>
+      <router-link :to="{ name: 'NewMessage', query:{ responseTo : originMsg.id}}" aria-label="Bouton répondre au message"><Btn msg="Répondre" /></router-link>
+      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id}, query:{ creatorId: originMsg.creator_id ,title : originMsg.title, content : originMsg.content}}" aria-label="Bouton pour modifier le message"><Btn msg="Modifier" v-if="allowAction(originMsg.creator_id)"/></router-link>
+      <Btn msg="Supprimer" @click="deleteMsg(originMsg.id, originMsg.creator_id)" v-if="allowAction(originMsg.creator_id)" aria-label="Bouton pour supprimer un message"/>
     </div> 
   </div>
   <h4>Réponses ({{ responses.length }})</h4>
-  <div v-if="responses.length>0" class="responses">
+  <div v-if="responses.length>0" class="responses" aria-label="Liste des réponses au message">
     <div v-for="(response, index) in responses" :key="index" class="response">
-      <span v-html="response.content"/>
+      <span v-html="response.content" aria-label="Contenu d'une réponse"/>
       <hr>
-      <p> Auteur : {{ fullname(response.User.firstname, response.User.lastname) }} - Date de rédaction :{{ displayedDate(response.creation_date) }}</p>
-      <router-link :to="{ name: 'Modify', params:{msgId : response.id}, query:{ responseTo: true, creatorId: response.creator_id , content : response.content}}"><Btn msg="Modifier" v-if="allowAction(response.creator_id)"/></router-link>
-      <Btn msg="Supprimer" @click="deleteMsg(response.id, response.creator_id)" v-if="allowAction(response.creator_id)"/>
+      <p aria-label="Informations sur la réponse"> Auteur : {{ fullname(response.User.firstname, response.User.lastname) }} - Date de rédaction :{{ displayedDate(response.creation_date) }}</p>
+      <router-link :to="{ name: 'Modify', params:{msgId : response.id}, query:{ responseTo: true, creatorId: response.creator_id , content : response.content}}" aria-label="Bouton pour modifier la réponse"><Btn msg="Modifier" v-if="allowAction(response.creator_id)"/></router-link>
+      <Btn msg="Supprimer" @click="deleteMsg(response.id, response.creator_id)" v-if="allowAction(response.creator_id)" aria-label="Bouton pour supprimer la réponse"/>
     </div>
   </div>
 </template>
 
 <script>
 import Btn from "../components/Button.vue";
-import formatDate from "../tools";
+import {formatDate} from "../tools";
 
 export default {
   name: "Message",
@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     displayedDate(dateToFormat){
-      return formatDate(dateToFormat)//FIXME onligé de créer une methode pour appeler la methode importée? relou?
+      return formatDate(dateToFormat)//FIXME obligé de créer une methode pour appeler la methode importée? relou?
     },
     //autorise l'affichage ou non de certains boutons selon l'utilisateur log / createur du message ou status modérateur
     allowAction(id){

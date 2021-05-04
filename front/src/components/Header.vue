@@ -1,19 +1,19 @@
 <template>
-    <nav>
-      <img src="../assets/icon-left-font-monochrome-white.svg" alt="Logo de groupomania">
-      <h1>Connecting People</h1>
-    </nav>
+    <header aria-label="header de la page avec logo et slogan">
+      <img src="../assets/icon-left-font-monochrome-white.svg" alt="Logo de groupomania" aria-label="image">
+      <h1 aria-label="slogan">Connecting People</h1>
+    </header>
 </template>
 
 <script>
 export default {
-  name: 'Navbar'
+  name: 'Header'
 }
 </script>
 
 <style lang="scss">
 
-  nav{
+  header{
     height:110px;
     padding:30px 0 20px 0;
     background-image: linear-gradient(
