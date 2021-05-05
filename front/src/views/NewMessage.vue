@@ -94,8 +94,7 @@ export default {
   beforeCreate(){
       this.$store.dispatch('isnewmsgpage')
   },
-  //FIXME desactiver title si provient de modifier une reponse
-  //
+  
   created(){
     if (this.$route.query.title)
       this.title = this.$route.query.title

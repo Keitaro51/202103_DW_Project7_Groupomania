@@ -76,7 +76,7 @@ exports.lastsMessages = (req, res, next) => {
                     }
                     answer.list.push(tmp)
                 };
-            res.status(200).json({...answer, message:'10 derniers messages'})
+            res.status(200).json({...answer, message:'10 messages de la page demandée'})
         })
         .catch(error => res.status(400).json({error, message:'Messages non récupérés'}));     
 };
@@ -98,14 +98,14 @@ exports.viewMessage = (req, res, next) => {
         ]
     })
         .then(msg=>{
-            if (msg === null) throw({status:404, message:"message inexistant"});
-            res.status(200).json({msg, message:'Messages récupéré'})
+            if (msg === null) throw({status:404, message:"Message inexistant"});
+            res.status(200).json({msg, message:'Message récupéré'})
         })
         .catch(error => res.status(error.status | 400).json({error, message:error.message | 'Message non récupéré'}));  
 };
 
 exports.responseList = (req, res, next) => { //TODO récupérer en même temps que le parent dans viewMessage
-    //récupère la liste d'id de totues les réponses à un message
+    //récupère la liste d'id de toutes les réponses à un message
     Message.findAll({
         where:{parent_msg_id:req.params.id},
         order:[['creation_date', 'ASC']],

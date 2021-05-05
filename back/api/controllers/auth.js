@@ -12,7 +12,7 @@ exports.sign = (req, res, next) => {
         .then(user => res.status(201).json({ user, message: 'Utilisateur créé' }))
         .catch(() => res.status(400).json({ error: 'Utilisateur non créé' }));
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(() => res.status(500).json({ error:'Problème lors du cryptage' }));
 }
 
 exports.login = (req, res, next) => {
@@ -21,7 +21,7 @@ exports.login = (req, res, next) => {
   User.findOne({ attributes: ['id', 'email', 'password', 'rights', 'is_connected'], where: { email: req.body.email } })
     .then(user => {
       if (!user) {
-        return res.status(400).json({ error: 'Utilisateur non trouvé!' })
+        return res.status(404).json({ error: 'Utilisateur non trouvé!' })
       }//FIXME plusieurs niveaux d'erreur, faut il tout mettre dans la doc?
       bcrypt.compare(req.body.password, user.password)
         .then(valid => {
@@ -39,19 +39,19 @@ exports.login = (req, res, next) => {
             )
           });
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => res.status(400).json({ error }));
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(400).json({ error }));
 };
 
 exports.forgot = (req, res, next) => {
   User.findOne({ attributes: ['email', 'password'], where: { email: req.body.email } })
     .then(user => {
       if (!user) {
-        return res.status(400).json({ error: 'Email non trouvé' })
+        return res.status(401).json({ error: 'Email non trouvé' })
       }
       //génération d'un nouveau mot de passe
-      const new_pass = generator.generate({ length: 15, numbers: true, symbols: true, strict: true })
+      const new_pass = generator.generate({ length: 8, numbers: true, symbols: true, strict: true,excludeSimilarCharacters:true })
       //enregistrement du nouveau mot de passe crypté
       bcrypt.hash(new_pass, 10)
         .then(hash => {
@@ -83,13 +83,11 @@ exports.forgot = (req, res, next) => {
                   console.log(error);
                 } else {
                   console.log('Email envoyé: ' + info.response);
-                  return res.status(201).json({ message: 'Email Envoyé' })
-
                 }
               });
-              res.status(201).json({ message: 'Mot de passe mis à jour dans la base' })
+              res.status(201).json({ message: 'Mot de passe mis à jour dans la base et email envoyé' })
             })
-            .catch(() => res.status(400).json({ error: 'Mot de passe inchangé' }));
+            .catch(() => res.status(500).json({ error: 'Problème d\'envoi de l\'email. Mot de passe inchangé' }));
         })
         .catch(error => res.status(500).json({ error }));
     })
