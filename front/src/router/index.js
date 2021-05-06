@@ -43,14 +43,17 @@ const routes = [
     },{
       path: 'message/:msgId',//TODO regex sur msgId
       name: "Message",
+      props:true,
       component: Message      
     },{
       path: 'message/new',
       name: "NewMessage",
+      props:true,
       component: NewMessage      
     },{
       path: 'message/modify/:msgId',
       name : "Modify",
+      props:true,
       component: NewMessage
     }]
   },{ path: '/:pathMatch(.*)*', 

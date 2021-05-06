@@ -7,7 +7,7 @@
       <span v-html="originMsg.content" aria-label="contenu du Cessage"/><br>
       <hr>
       <router-link :to="{ name: 'NewMessage', query:{ responseTo : originMsg.id}}" aria-label="Bouton répondre au message"><Btn msg="Répondre" /></router-link>
-      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id}, query:{ creatorId: originMsg.creator_id ,title : originMsg.title, content : originMsg.content}}" aria-label="Bouton pour modifier le message"><Btn msg="Modifier" v-if="allowAction(originMsg.creator_id)"/></router-link>
+      <router-link :to="{ name: 'Modify', params:{msgId : originMsg.id,modifyTitle:originMsg.title, modifyContent:originMsg.content}, query:{ creatorId: originMsg.creator_id }}" aria-label="Bouton pour modifier le message"><Btn msg="Modifier" v-if="allowAction(originMsg.creator_id)"/></router-link>
       <Btn msg="Supprimer" @click="deleteMsg(originMsg.id, originMsg.creator_id)" v-if="allowAction(originMsg.creator_id)" aria-label="Bouton pour supprimer un message"/>
     </div> 
   </div>
@@ -17,7 +17,7 @@
       <span v-html="response.content" aria-label="Contenu d'une réponse"/>
       <hr>
       <p aria-label="Informations sur la réponse"> Auteur : {{ fullname(response.User.firstname, response.User.lastname) }} - Date de rédaction :{{ displayedDate(response.creation_date) }}</p>
-      <router-link :to="{ name: 'Modify', params:{msgId : response.id}, query:{ responseTo: true, creatorId: response.creator_id , content : response.content}}" aria-label="Bouton pour modifier la réponse"><Btn msg="Modifier" v-if="allowAction(response.creator_id)"/></router-link>
+      <router-link :to="{ name: 'Modify', params:{msgId : response.id, modifyContent : response.content}, query:{ responseTo: true, creatorId: response.creator_id}}" aria-label="Bouton pour modifier la réponse"><Btn msg="Modifier" v-if="allowAction(response.creator_id)"/></router-link>
       <Btn msg="Supprimer" @click="deleteMsg(response.id, response.creator_id)" v-if="allowAction(response.creator_id)" aria-label="Bouton pour supprimer la réponse"/>
     </div>
   </div>
@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     displayedDate(dateToFormat){
-      return formatDate(dateToFormat)//FIXME obligé de créer une methode pour appeler la methode importée? relou?
+      return formatDate(dateToFormat)
     },
     //autorise l'affichage ou non de certains boutons selon l'utilisateur log / createur du message ou status modérateur
     allowAction(id){
@@ -57,7 +57,7 @@ export default {
         },
         body: JSON.stringify({userId:parseInt(localStorage.getItem('userId')), msgCreatorId: creatorId, messageId: msgId})
       })
-      .then(response=>{ //FIXME plus simple pour gestion d'erreur? then et await at ame time? try catch?
+      .then(response=>{ //FIXME plus simple pour gestion d'erreur? then et await at same time? try catch?
         (response.ok) ? (this.$router.push({ name: 'List', params : {pageId : 1 }})) : alert('Action non authorisée')
       })
     },
@@ -86,7 +86,7 @@ export default {
     this.originCreatorInfo = this.originMsg.User;
     
     //récupère tableau de réponses
-    let responseList = await fetch(this.$store.state.src + 'message/responses/' + tmp,{ //FIXME si tmp:"" dans data, this.tmp perd sa valeur ici
+    let responseList = await fetch(this.$store.state.src + 'message/responses/' + tmp,{
       method: "POST",
       headers: {
         'authorization': 'bearer ' + localStorage.getItem('token'),

@@ -15,7 +15,6 @@
     <Editor
       v-model="content"
       class="textcontent"
-      initialValue= "tavreg"
       api-key="5wjce11s330g0rfxm66wdq77k5d017gyjy9pqkshr6hb93iq"
       :init="{
         height: 300,
@@ -38,7 +37,7 @@
     <Btn msg="Enregistrer" aria-label="Enregistrer le message"/>
     <router-link :to="{ name: 'List', params : {pageId:1 }}" aria-label="Annuler l'action en cours et retour à la page des derniers messages"><Btn msg="Annuler" /></router-link>
   </form>
-  
+
 </template>
 
 <script>
@@ -57,8 +56,15 @@ export default {
       content:"",
     }
   },
-  props: {
-    msg: String,
+  props:{
+    modifyTitle: {
+      type:String,
+      required:false
+    },
+    modifyContent: {
+      type:String,
+      required:false
+    }
   },
   methods:{
     async saveMsg(e){
@@ -96,10 +102,10 @@ export default {
   },
   
   created(){
-    if (this.$route.query.title)
-      this.title = this.$route.query.title
-    if (this.$route.query.content)//FIXME bonne methode de passer tout le title/content en url?
-      this.content = this.$route.query.content
+    if (this.modifyTitle)
+      this.title = this.modifyTitle
+    if (this.modifyContent)
+      this.content = this.modifyContent
   },
   unmounted(){
       this.$store.dispatch('isnewmsgpage')

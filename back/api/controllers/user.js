@@ -27,7 +27,6 @@ exports.viewProfil = (req, res, next) => {
 };
 
 exports.profilUpdate = async (req, res, next) => {
-  //TODO prise en charge des avatar
   const toUpdate = {};
   try {
     if (req.body.new_email) toUpdate.email = req.body.new_email;

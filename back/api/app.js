@@ -12,7 +12,7 @@ const authRoutes = require('./routes/auth');
 (async function() {
   try {
     const sequelize = new Sequelize(`mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3306/${process.env.DB_NAME}`,{
-      pool:{ //FIXME what is pool? dépend des param de l'hebergeur?
+      pool:{
         max:5,
         min:0,
         acquire:3000,

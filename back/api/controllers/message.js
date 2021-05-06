@@ -29,7 +29,7 @@ exports.deleteMessage = (req, res, next) => {
             }else{
                 throw error ='Opération non autorisée pour cet utilisateur!'
             }
-            })
+        })
         .catch(error => res.status(400).json({error}));
 };
 
