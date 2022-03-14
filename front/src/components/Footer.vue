@@ -21,6 +21,9 @@ footer{
   padding:30px 0 30px 0;
   color:white;
 }
+ul{
+  padding:0
+}
 li{
   list-style: none;
   padding-top: 5px;

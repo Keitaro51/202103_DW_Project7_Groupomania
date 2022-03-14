@@ -10,7 +10,7 @@ const Message = sequelize.define('Message', {
     autoIncrement:true,
     primaryKey: true
   },
-   creator_id: {
+  creator_id: {
     type: DataTypes.SMALLINT.UNSIGNED,
     allowNull: false,
     references:{
@@ -38,6 +38,6 @@ const Message = sequelize.define('Message', {
   underscored: true,
 });
 
-Message.belongsTo(User, { foreignKey: 'creator_id', onUpdate: 'RESTRICT', onDelete: 'RESTRICT' }); 
+Message.belongsTo(User, { foreignKey: 'creator_id', onUpdate: 'RESTRICT', onDelete: 'CASCADE' }); 
 //Message.sync({force:true}); 
 module.exports = Message;

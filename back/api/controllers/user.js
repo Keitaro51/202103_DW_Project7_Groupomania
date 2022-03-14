@@ -63,8 +63,8 @@ exports.departmentList = async (req, res, next) =>{
 }
 
 exports.deleteProfil = async (req, res, next) =>{
+  //FIXME supprimer un profil supprime les messages via clé etrangère on_delete:cascade mais ne supprime pas les réponse à ces messages, ce qui fait bugguer dans ce cas de figure le composant vue list
   //empeche un autre utilisateur de supprimer un profil, sauf admin
-  //TODO comment oraganiser la suppression d'un utilisateur? supprimer les mesages associés??
   if((req.body.userId == req.params.id) || (req.body.userRights == 3)){
     await User.destroy({ where: { id: req.params.id } })
       .then(()=>res.status(200).json({message:'Profil supprimé'}))
